@@ -17,9 +17,16 @@
 
 
     function createLogEvent($logString) {
-        $logElements = split(' ', $logString);
+        $logElements = explode(' ', $logString);
         $logEvent = new LHLogEvent();
-        $logEvent->setIpAddress($logElements[0]);
+        $logEvent->setCid(LHLogEvent::buildCidFromIP($logElements[0]));
+        $logEvent->setLandingPagePath($logElements[5]);
+        $logEvent->setMethod($logElements[4]);
+        $timestampAsString = $logElements[3];
+        $timestampAsString = str_replace('[', '', $timestampAsString);
+        $timestampAsString = str_replace(']', '', $timestampAsString);
+        $timestamp = DateTime::createFromFormat('d/M/Y:H:i:s', $timestampAsString);
+        $logEvent->setTimestamp($timestamp);
         return $logEvent;
     }
 
@@ -39,7 +46,7 @@
     $logHero = new LHClient('YOUR_API_KEY', 3);
     foreach ($logString as $logString) {
         print('Submitting '.$logString."\n");
-        $lhLogEvent = createLogEvent($logString);
+        $lhLogEvent = createLogEvent($logString, $logHero);
         $logHero->submit($lhLogEvent);
     }
     $logHero->flush();

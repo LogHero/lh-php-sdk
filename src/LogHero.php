@@ -1,19 +1,46 @@
 <?php
 
     class LHLogEvent {
-        var $ipAdress;
+        var $cid;
+        var $landingPagePath;
+        var $method;
+        var $timestampAsIsoString;
 
-        function setIpAddress($ipAdress) {
-            $this->ipAdress = $ipAdress;
+        function setCid($cid) {
+            $this->cid = $cid;
+        }
+
+        function setLandingPagePath($landingPagePath) {
+            $this->landingPagePath = $landingPagePath;
+        }
+
+        function setMethod($method) {
+            $this->method = $method;
+        }
+
+        function setTimestamp($timestamp) {
+            $this->timestampAsIsoString = $timestamp->format(DateTime::ATOM);
+        }
+
+        public static function buildCidFromIP($ipAddress) {
+            return hash('md5', $ipAddress);
         }
 
         public static function columns() {
-            return array('IP');
+            return array(
+                'cid',
+                'landingPage',
+                'method',
+                'timestamp'
+            );
         }
 
         public function row() {
             return array(
-                $this->ipAdress
+                $this->cid,
+                $this->landingPagePath,
+                $this->method,
+                $this->timestampAsIsoString
             );
         }
 
