@@ -22,6 +22,7 @@
             $this->timestampAsIsoString = $timestamp->format(DateTime::ATOM);
         }
 
+        # TODO Use IP and User Agent to build hash
         public static function buildCidFromIP($ipAddress) {
             return hash('md5', $ipAddress);
         }
@@ -52,7 +53,7 @@
         var $logEvents = array();
         var $logEndpoint;
 
-        public function __construct($apiKey, $logEventsPerRecord=25, $logEndpoint='http://localhost:8081/logs/') {
+        public function __construct($apiKey, $logEventsPerRecord=25, $logEndpoint='http://test.t2ryddmw8p.eu-central-1.elasticbeanstalk.com/logs/') {
             $this->apiKey = $apiKey;
             $this->logEventsPerRecord = $logEventsPerRecord;
             $this->logEndpoint = $logEndpoint;
@@ -66,7 +67,7 @@
         }
 
         public function flush() {
-            print('Flusing '.count($this->logEvents)." records\n");
+            print('Flushing '.count($this->logEvents)." records\n");
             $payload = $this->buildPayload();
             $this->send($payload);
             $this->logEvents = array();

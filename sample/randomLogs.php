@@ -39,7 +39,9 @@
         '89.36.206.3 - - ['.randomDateString().'] "GET /log-hero/articles/ HTTP/1.1" 302 - "-" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36"',
         '89.36.206.3 - - ['.randomDateString().'] "GET /log-hero/plans/ HTTP/1.1" 302 - "-" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36"',
         '76.344.23.424 - - ['.randomDateString().'] "GET /log-hero/themes/ HTTP/1.1" 302 - "-" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36"',
-        '79.228.13.104 - - ['.randomDateString().'] "GET /log-hero/plans/ HTTP/1.1" 302 - "-" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36"'
+        '79.228.13.104 - - ['.randomDateString().'] "GET /log-hero/plans/ HTTP/1.1" 302 - "-" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36"',
+        '57.123.48.399 - - ['.randomDateString().'] "GET /log-hero/plans/ HTTP/1.1" 302 - "-" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36"',
+        '91.45.15.109 - - ['.randomDateString().'] "GET /log-hero/plans/ HTTP/1.1" 302 - "-" "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.94 Safari/537.36"'
     );
 
 
