@@ -1,10 +1,11 @@
 <?php
 
     class LHLogEvent {
-        var $cid;
         var $landingPagePath;
         var $method;
         var $timestampAsIsoString;
+        var $userAgent;
+        var $ipAddress;
 
         function setCid($cid) {
             $this->cid = $cid;
@@ -18,13 +19,21 @@
             $this->method = $method;
         }
 
-        function setTimestamp($timestamp) {
-            $this->timestampAsIsoString = $timestamp->format(DateTime::ATOM);
+        function setUserAgent($userAgent) {
+            $this->userAgent = $userAgent;
         }
 
-        # TODO Use IP and User Agent to build hash
-        public static function buildCidFromIP($ipAddress) {
-            return hash('md5', $ipAddress);
+        function setIpAddress($ipAddress) {
+            $this->ipAddress = $ipAddress;
+        }
+
+        function setTimestamp($timestamp) {
+            $this->timestampAsIsoString = $timestamp->format(DateTime::ATOM);
+            print($this->timestampAsIsoString);
+        }
+
+        private static function buildCidFromIPAndUserAgent($ipAddress, $userAgent) {
+            return hash('md5', $ipAddress.$userAgent);
         }
 
         public static function columns() {
@@ -32,16 +41,20 @@
                 'cid',
                 'landingPage',
                 'method',
-                'timestamp'
+                'timestamp',
+                'ip',
+                'ua'
             );
         }
 
         public function row() {
             return array(
-                $this->cid,
+                LHLogEvent::buildCidFromIPAndUserAgent($this->ipAddress, $this->userAgent),
                 $this->landingPagePath,
                 $this->method,
-                $this->timestampAsIsoString
+                $this->timestampAsIsoString,
+                hash('md5', $this->ipAddress),
+                $this->userAgent
             );
         }
 

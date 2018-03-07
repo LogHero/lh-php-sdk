@@ -17,12 +17,15 @@
 
 
     function createLogEvent($logString) {
-        $logElements = explode(' ', $logString);
+        $logElementsSpaces = explode(' ', $logString);
+        $logElementsQuotes = explode('"', $logString);
         $logEvent = new LHLogEvent();
-        $logEvent->setCid(LHLogEvent::buildCidFromIP($logElements[0]));
-        $logEvent->setLandingPagePath($logElements[5]);
-        $logEvent->setMethod($logElements[4]);
-        $timestampAsString = $logElements[3];
+        $userAgent = $logElementsQuotes[5];
+        $logEvent->setUserAgent($userAgent);
+        $logEvent->setIpAddress($logElementsSpaces[0]);
+        $logEvent->setLandingPagePath($logElementsSpaces[5]);
+        $logEvent->setMethod($logElementsSpaces[4]);
+        $timestampAsString = $logElementsSpaces[3];
         $timestampAsString = str_replace('[', '', $timestampAsString);
         $timestampAsString = str_replace(']', '', $timestampAsString);
         $timestamp = DateTime::createFromFormat('d/M/Y:H:i:s', $timestampAsString);
