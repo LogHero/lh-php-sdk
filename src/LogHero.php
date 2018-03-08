@@ -29,7 +29,6 @@
 
         function setTimestamp($timestamp) {
             $this->timestampAsIsoString = $timestamp->format(DateTime::ATOM);
-            print($this->timestampAsIsoString);
         }
 
         private static function buildCidFromIPAndUserAgent($ipAddress, $userAgent) {
