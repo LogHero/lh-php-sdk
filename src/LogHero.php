@@ -1,11 +1,11 @@
 <?php
 
     class LHLogEvent {
-        var $landingPagePath;
-        var $method;
-        var $timestampAsIsoString;
-        var $userAgent;
-        var $ipAddress;
+        protected $landingPagePath;
+        protected $method;
+        protected $timestampAsIsoString;
+        protected $userAgent;
+        protected $ipAddress;
 
         function setCid($cid) {
             $this->cid = $cid;
@@ -35,7 +35,7 @@
             return hash('md5', $ipAddress.$userAgent);
         }
 
-        public static function columns() {
+        public function columns() {
             return array(
                 'cid',
                 'landingPage',
@@ -60,10 +60,10 @@
     }
 
     class LHClient {
-        var $apiKey;
-        var $logEventsPerRecord;
-        var $logEvents = array();
-        var $logEndpoint;
+        private $apiKey;
+        private $logEventsPerRecord;
+        private $logEvents = array();
+        private $logEndpoint;
 
         public function __construct($apiKey, $logEventsPerRecord=25, $logEndpoint='http://test.t2ryddmw8p.eu-central-1.elasticbeanstalk.com/logs/') {
             $this->apiKey = $apiKey;
@@ -79,7 +79,11 @@
         }
 
         public function flush() {
-            print('Flushing '.count($this->logEvents)." records\n");
+            if (count($this->logEvents) == 0) {
+                print('Ignore flush because no log events are recorded\n');
+                return;
+            }
+            print('Flushing '.count($this->logEvents).' records\n');
             $payload = $this->buildPayload();
             $this->send($payload);
             $this->logEvents = array();
@@ -87,11 +91,16 @@
 
         private function buildPayload() {
             $rows = array();
+            $columns = NULL;
             foreach ($this->logEvents as $logEvent) {
                 array_push($rows, $logEvent->row());
+                if (is_null($columns)) {
+                    $columns = $logEvent->columns();
+                }
             }
+            assert(is_null($columns) == false);
             return array(
-                'columns' => LHLogEvent::columns(),
+                'columns' => $columns,
                 'rows' => $rows
             );
         }
