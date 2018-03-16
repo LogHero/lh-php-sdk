@@ -1,6 +1,5 @@
 #!/usr/bin/php -q
 <?php
-    include(dirname(__DIR__).'/src/LogHero.php');
     include(dirname(__DIR__).'/src/LogHeroDebug.php');
 
     date_default_timezone_set('Europe/Berlin');
