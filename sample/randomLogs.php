@@ -1,11 +1,12 @@
 #!/usr/bin/php -q
 <?php
     include(dirname(__DIR__).'/src/LogHero.php');
+    include(dirname(__DIR__).'/src/LogHeroDebug.php');
 
     date_default_timezone_set('Europe/Berlin');
     function randomDateString()
     {
-        $intervalSeconds = 3600;
+        $intervalSeconds = 500;
         $startDate = new DateTime();
         $startDate->sub(new DateInterval('PT'.$intervalSeconds.'S'));
         $endDate = new DateTime();
@@ -19,7 +20,7 @@
     function createLogEvent($logString) {
         $logElementsSpaces = explode(' ', $logString);
         $logElementsQuotes = explode('"', $logString);
-        $logEvent = new LHLogEvent();
+        $logEvent = new LHDebugLogEvent();
         $userAgent = $logElementsQuotes[5];
         $logEvent->setUserAgent($userAgent);
         $logEvent->setIpAddress($logElementsSpaces[0]);
