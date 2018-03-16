@@ -1,5 +1,5 @@
 <?php
-    include(dirname(__DIR__).'/LogHero.php');
+    include(dirname(__FILE__).'/LogHero.php');
 
     class LHDebugLogEvent extends LHLogEvent  {
 
