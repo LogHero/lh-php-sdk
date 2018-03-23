@@ -3,6 +3,7 @@
     class LHLogEvent {
         protected $landingPagePath;
         protected $method;
+        protected $statusCode;
         protected $timestampAsIsoString;
         protected $userAgent;
         protected $ipAddress;
@@ -17,6 +18,10 @@
 
         function setMethod($method) {
             $this->method = $method;
+        }
+        
+        function setStatusCode($statusCode) {
+            $this->statusCode = $statusCode;
         }
 
         function setUserAgent($userAgent) {
@@ -40,6 +45,7 @@
                 'cid',
                 'landingPage',
                 'method',
+                'statusCode',
                 'timestamp',
                 'ip',
                 'ua'
@@ -51,6 +57,7 @@
                 LHLogEvent::buildCidFromIPAndUserAgent($this->ipAddress, $this->userAgent),
                 $this->landingPagePath,
                 $this->method,
+                $this->statusCode,
                 $this->timestampAsIsoString,
                 hash('md5', $this->ipAddress),
                 $this->userAgent
