@@ -52,6 +52,7 @@
             );
         }
 
+        # TODO Verify row data before sending to backend
         public function row() {
             return array(
                 LHLogEvent::buildCidFromIPAndUserAgent($this->ipAddress, $this->userAgent),
@@ -90,7 +91,6 @@
                 print('Ignore flush because no log events are recorded\n');
                 return;
             }
-            print('Flushing '.count($this->logEvents).' records\n');
             $payload = $this->buildPayload();
             $this->send($payload);
             $this->logEvents = array();
