@@ -7,9 +7,10 @@
         protected $timestampAsIsoString;
         protected $userAgent;
         protected $ipAddress;
+        protected $hostname;
 
-        function setCid($cid) {
-            $this->cid = $cid;
+        function setHostname($hostname) {
+            $this->hostname = $hostname;
         }
 
         function setLandingPagePath($landingPagePath) {
@@ -43,6 +44,7 @@
         public function columns() {
             return array(
                 'cid',
+                'hostname',
                 'landingPage',
                 'method',
                 'statusCode',
@@ -56,6 +58,7 @@
         public function row() {
             return array(
                 LHLogEvent::buildCidFromIPAndUserAgent($this->ipAddress, $this->userAgent),
+                $this->hostname,
                 $this->landingPagePath,
                 $this->method,
                 $this->statusCode,
