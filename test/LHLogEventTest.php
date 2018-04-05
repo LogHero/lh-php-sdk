@@ -1,11 +1,9 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
-require __DIR__ . '/../src/LogHero.php';
+require_once __DIR__ . '/../src/LogHero.php';
 
 use PHPUnit\Framework\TestCase;
 
-class LHLogEventTest extends TestCase
-{
+class LHLogEventTest extends TestCase {
     private $logEvent;
 
     public function setUp() {
@@ -18,13 +16,14 @@ class LHLogEventTest extends TestCase
 
     public function testCreateRowFromLogEventData()
     {
-        $this->logEvent->setIpAddress('123.456.78.9');
-        $this->logEvent->setHostName('www.example.com');
-        $this->logEvent->setLandingPagePath('/home');
-        $this->logEvent->setMethod('GET');
-        $this->logEvent->setStatusCode('200');
-        $this->logEvent->setUserAgent('Firefox');
-        $this->logEvent->setTimestamp(new DateTime('2018-03-31T15:03:01Z'));
+        $this->logEvent
+            ->setIpAddress('123.456.78.9')
+            ->setHostName('www.example.com')
+            ->setLandingPagePath('/home')
+            ->setMethod('GET')
+            ->setStatusCode('200')
+            ->setUserAgent('Firefox')
+            ->setTimestamp(new DateTime('2018-03-31T15:03:01Z'));
         $this->assertEquals($this->logEvent->row(), [
             '4355d3ffc1fd8aa45fc712ed92e23081',
             'www.example.com',
@@ -36,5 +35,5 @@ class LHLogEventTest extends TestCase
             'Firefox'
         ]);
     }
+
 }
-?>
