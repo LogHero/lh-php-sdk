@@ -6,29 +6,38 @@ use PHPUnit\Framework\TestCase;
 class LHClientTest extends TestCase {
     private $apiAccessStub;
     private $logHeroClient;
+    private $logEventsPerRecord = 3;
 
     public function setUp()
     {
         $this->apiAccessStub = $this->createMock(APIAccess::class);
-        $this->logHeroClient = new LHClient($this->apiAccessStub);
+        $this->logHeroClient = new LHClient($this->apiAccessStub, $this->logEventsPerRecord);
+    }
+
+    public function testSubmitNothingIfNoLogsRecorded() {
+        $this->apiAccessStub
+            ->expects($this->never())
+            ->method('submitLogPackage');
+        $this->logHeroClient->flush();
     }
 
     public function testSubmitLogEventToApi() {
         $this->apiAccessStub
             ->expects($this->once())
             ->method('submitLogPackage')
-            ->with($this->equalTo($this->buildExpectedPayload([[
-                '4355d3ffc1fd8aa45fc712ed92e23081',
-                'www.example.com',
-                '/home',
-                'GET',
-                '200',
-                '2018-03-31T15:03:01+00:00',
-                '3ee9e546c0a3811697e424f94ee70bc1',
-                'Firefox'
-            ]])));
+            ->with($this->equalTo($this->buildExpectedPayload($this->createLogEventRows(1))));
         $this->logHeroClient->submit($this->createLogEvent());
         $this->logHeroClient->flush();
+    }
+
+    public function testSubmitLogEventsIfRecordSizeIsReached() {
+        $this->apiAccessStub
+            ->expects($this->exactly(2))
+            ->method('submitLogPackage')
+            ->with($this->equalTo($this->buildExpectedPayload($this->createLogEventRows(3))));
+        for ($x = 0; $x < 7; ++$x) {
+            $this->logHeroClient->submit($this->createLogEvent());
+        }
     }
 
     private function createLogEvent() {
@@ -48,5 +57,22 @@ class LHClientTest extends TestCase {
             'columns' => ['cid','hostname','landingPage','method','statusCode','timestamp','ip','ua'],
             'rows' => $rows
         ));
+    }
+
+    private function createLogEventRows($numberOfRows) {
+        $rows = array();
+        for ($x = 0; $x < $numberOfRows; ++$x) {
+            array_push($rows, [
+                '4355d3ffc1fd8aa45fc712ed92e23081',
+                'www.example.com',
+                '/home',
+                'GET',
+                '200',
+                '2018-03-31T15:03:01+00:00',
+                '3ee9e546c0a3811697e424f94ee70bc1',
+                'Firefox'
+            ]);
+        }
+        return $rows;
     }
 }

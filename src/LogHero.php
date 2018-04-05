@@ -83,8 +83,9 @@ class LHClient {
     private $logEventsPerRecord = 25;
     private $logEvents = array();
 
-    public function __construct($apiAccess) {
+    public function __construct($apiAccess, $logEventsPerRecord=25) {
         $this->apiAccess = $apiAccess;
+        $this->logEventsPerRecord = $logEventsPerRecord;
     }
 
     public static function create($apiKey, $logEndpoint='http://test.t2ryddmw8p.eu-central-1.elasticbeanstalk.com/logs/') {
@@ -100,7 +101,6 @@ class LHClient {
 
     public function flush() {
         if (count($this->logEvents) == 0) {
-            print('Ignore flush because no log events are recorded\n');
             return;
         }
         $payload = $this->buildPayload();
