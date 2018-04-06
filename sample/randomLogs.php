@@ -19,18 +19,19 @@
     function createLogEvent($logString) {
         $logElementsSpaces = explode(' ', $logString);
         $logElementsQuotes = explode('"', $logString);
-        $logEvent = new LHDebugLogEvent();
         $userAgent = $logElementsQuotes[5];
-        $logEvent->setUserAgent($userAgent);
-        $logEvent->setIpAddress($logElementsSpaces[0]);
-        $logEvent->setLandingPagePath($logElementsSpaces[5]);
-        $logEvent->setMethod($logElementsSpaces[4]);
-        $logEvent->setStatusCode($logElementsSpaces[7]);
         $timestampAsString = $logElementsSpaces[3];
         $timestampAsString = str_replace('[', '', $timestampAsString);
         $timestampAsString = str_replace(']', '', $timestampAsString);
         $timestamp = DateTime::createFromFormat('d/M/Y:H:i:s', $timestampAsString);
-        $logEvent->setTimestamp($timestamp);
+        $logEvent = new LHDebugLogEvent();
+        $logEvent
+            ->setUserAgent($userAgent)
+            ->setIpAddress($logElementsSpaces[0])
+            ->setLandingPagePath($logElementsSpaces[5])
+            ->setMethod($logElementsSpaces[4])
+            ->setStatusCode($logElementsSpaces[7])
+            ->setTimestamp($timestamp);
         return $logEvent;
     }
 
@@ -49,7 +50,7 @@
     );
 
 
-    $logHero = new LHClient('YOUR_API_KEY', 3);
+    $logHero = LHClient::create('YOUR_API_KEY');
     foreach ($logStringArray as $logString) {
         print('Submitting '.$logString."\n");
         $lhLogEvent = createLogEvent($logString);
