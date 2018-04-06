@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__FILE__).'/APIAccess.php');
+require_once __DIR__ . '/APIAccess.php';
 
 
 class InvalidLogEventException extends Exception {
