@@ -1,6 +1,12 @@
 <?php
 require_once(dirname(__FILE__).'/APIAccess.php');
 
+
+class InvalidLogEventException extends Exception {
+    
+}
+
+
 class LHLogEvent {
     protected $landingPagePath;
     protected $method;
@@ -62,8 +68,8 @@ class LHLogEvent {
         );
     }
 
-    # TODO Verify row data before sending to backend
     public function row() {
+        $this->verify();
         return array(
             LHLogEvent::buildCidFromIPAndUserAgent($this->ipAddress, $this->userAgent),
             $this->hostname,
@@ -74,6 +80,20 @@ class LHLogEvent {
             hash('md5', $this->ipAddress),
             $this->userAgent
         );
+    }
+
+    private function verify() {
+        $this->ensureSet($this->landingPagePath, 'Landing page path');
+        $this->ensureSet($this->userAgent, 'User agent');
+        $this->ensureSet($this->ipAddress, 'Ip address');
+        $this->ensureSet($this->hostname, 'Hostname');
+        $this->ensureSet($this->timestampAsIsoString, 'Timestamp');
+    }
+
+    private static function ensureSet($property, $propertyName) {
+        if (!$property) {
+            throw new InvalidLogEventException('Log event is incomplete: ' . $propertyName . ' is null');
+        }
     }
 
 }
