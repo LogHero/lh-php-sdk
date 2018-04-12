@@ -28,6 +28,7 @@
         $logEvent
             ->setUserAgent($userAgent)
             ->setIpAddress($logElementsSpaces[0])
+            ->setHostname('local.loghero.io')
             ->setLandingPagePath($logElementsSpaces[5])
             ->setMethod($logElementsSpaces[4])
             ->setStatusCode($logElementsSpaces[7])
