@@ -108,7 +108,7 @@ class LHClient {
         $this->logEventsPerRecord = $logEventsPerRecord;
     }
 
-    public static function create($apiKey, $logEndpoint='http://test.t2ryddmw8p.eu-central-1.elasticbeanstalk.com/logs/') {
+    public static function create($apiKey, $logEndpoint='https://development.loghero.io/logs/') {
         return new LHClient(new APIAccessCurl($apiKey, $logEndpoint));
     }
 
