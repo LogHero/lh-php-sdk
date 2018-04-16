@@ -108,8 +108,8 @@ class LHClient {
         $this->logEventsPerRecord = $logEventsPerRecord;
     }
 
-    public static function create($apiKey, $logEndpoint='https://development.loghero.io/logs/') {
-        return new LHClient(new APIAccessCurl($apiKey, $logEndpoint));
+    public static function create($apiKey, $clientId, $logEndpoint='https://development.loghero.io/logs/') {
+        return new LHClient(new APIAccessCurl($apiKey, $clientId, $logEndpoint));
     }
 
     public function submit($logEvent) {

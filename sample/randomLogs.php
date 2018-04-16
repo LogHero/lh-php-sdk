@@ -51,7 +51,7 @@
     );
 
 
-    $logHero = LHClient::create('YOUR_API_KEY');
+    $logHero = LHClient::create('YOUR_API_KEY', 'YOUR CLIENT ID');
     foreach ($logStringArray as $logString) {
         print('Submitting '.$logString."\n");
         $lhLogEvent = createLogEvent($logString);

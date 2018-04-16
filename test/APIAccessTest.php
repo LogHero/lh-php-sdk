@@ -6,8 +6,8 @@ use PHPUnit\Framework\TestCase;
 class APIAccessCurlForTesting extends APIAccessCurl {
     private $curlClientMock;
 
-    public function __construct($apiKey, $apiLogPackageEndpoint, $curlClientMock) {
-        parent::__construct($apiKey, $apiLogPackageEndpoint);
+    public function __construct($apiKey, $clientId, $apiLogPackageEndpoint, $curlClientMock) {
+        parent::__construct($apiKey, $clientId, $apiLogPackageEndpoint);
         $this->curlClientMock = $curlClientMock;
     }
 
@@ -20,12 +20,22 @@ class APIAccessCurlForTesting extends APIAccessCurl {
 class APIAccessCurlTest extends TestCase {
     private $curlClientMock;
     private $apiKey = 'LH-1234';
+    private $clientId = 'Test Client';
     private $endoint = 'https://www.loghero.io/logs/';
     private $apiAccess;
+    private $expectedUserAgent;
 
     public function setUp() {
         $this->curlClientMock = $this->createMock(CurlClient::class);
-        $this->apiAccess = new APIAccessCurlForTesting($this->apiKey, $this->endoint, $this->curlClientMock);
+        $this->apiAccess = new APIAccessCurlForTesting(
+            $this->apiKey,
+            $this->clientId,
+            $this->endoint,
+            $this->curlClientMock
+        );
+        $composerPackage = file_get_contents(__DIR__.'/../composer.json');
+        $composerPackage = json_decode($composerPackage,true);
+        $this->expectedUserAgent = 'Test Client; PHP SDK '.$composerPackage['name'].'@'.$composerPackage['version'];
     }
 
     public function testPostPayload() {
@@ -34,7 +44,8 @@ class APIAccessCurlTest extends TestCase {
             ->method('setOpt')
             ->with($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array(
                 'Content-type: application/json',
-                'Authorization: '.'LH-1234'
+                'Authorization: LH-1234',
+                'User-Agent: '.$this->expectedUserAgent
             )));
         $this->curlClientMock
             ->expects($this->at(1))
