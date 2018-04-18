@@ -7,7 +7,7 @@ class LHLogEventTest extends TestCase {
 
     public function testCreateColumns() {
         $logEvent = $this->createValidLogEvent();
-        $this->assertEquals(count($logEvent->columns()), 8);
+        $this->assertEquals(count($logEvent->columns()), 9);
     }
 
     public function testCreateRowFromLogEventData() {
@@ -19,6 +19,7 @@ class LHLogEventTest extends TestCase {
             'GET',
             '200',
             '2018-03-31T15:03:01+00:00',
+            150,
             '3ee9e546c0a3811697e424f94ee70bc1',
             'Firefox'
         ]);
@@ -76,6 +77,23 @@ class LHLogEventTest extends TestCase {
         $logEvent->row();
     }
 
+    public function testLoadTimeIsOptional() {
+        $logEvent = $this->createValidLogEvent();
+        $logEvent->setPageLoadTimeMilliSec(null);
+        $this->assertEquals($logEvent->row(), [
+            '4355d3ffc1fd8aa45fc712ed92e23081',
+            'www.example.com',
+            '/home',
+            'GET',
+            '200',
+            '2018-03-31T15:03:01+00:00',
+            null,
+            '3ee9e546c0a3811697e424f94ee70bc1',
+            'Firefox'
+        ]);
+        $logEvent->row();
+    }
+
     private function createValidLogEvent() {
         $logEvent = new LHLogEvent();
         $logEvent
@@ -85,6 +103,7 @@ class LHLogEventTest extends TestCase {
             ->setMethod('GET')
             ->setStatusCode('200')
             ->setUserAgent('Firefox')
+            ->setPageLoadTimeMilliSec(150)
             ->setTimestamp(new DateTime('2018-03-31T15:03:01Z'));
         return $logEvent;
     }

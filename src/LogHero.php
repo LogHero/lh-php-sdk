@@ -12,6 +12,7 @@ class LHLogEvent {
     protected $method;
     protected $statusCode;
     protected $timestampAsIsoString;
+    protected $pageLoadTimeMilliSec;
     protected $userAgent;
     protected $ipAddress;
     protected $hostname;
@@ -51,6 +52,11 @@ class LHLogEvent {
         return $this;
     }
 
+    function setPageLoadTimeMilliSec($pageLoadTimeMilliSec) {
+        $this->pageLoadTimeMilliSec = $pageLoadTimeMilliSec;
+        return $this;
+    }
+
     private static function buildCidFromIPAndUserAgent($ipAddress, $userAgent) {
         return hash('md5', $ipAddress.$userAgent);
     }
@@ -63,6 +69,7 @@ class LHLogEvent {
             'method',
             'statusCode',
             'timestamp',
+            'pageLoadTime',
             'ip',
             'ua'
         );
@@ -77,6 +84,7 @@ class LHLogEvent {
             $this->method,
             $this->statusCode,
             $this->timestampAsIsoString,
+            $this->pageLoadTimeMilliSec,
             hash('md5', $this->ipAddress),
             $this->userAgent
         );

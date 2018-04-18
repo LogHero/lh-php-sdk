@@ -48,13 +48,14 @@ class LHClientTest extends TestCase {
             ->setLandingPagePath('/home')
             ->setMethod('GET')
             ->setStatusCode('200')
+            ->setPageLoadTimeMilliSec(123)
             ->setUserAgent('Firefox')
             ->setTimestamp(new DateTime('2018-03-31T15:03:01Z'));
     }
 
     private function buildExpectedPayload($rows) {
         return json_encode(array(
-            'columns' => ['cid','hostname','landingPage','method','statusCode','timestamp','ip','ua'],
+            'columns' => ['cid','hostname','landingPage','method','statusCode','timestamp', 'pageLoadTime','ip','ua'],
             'rows' => $rows
         ));
     }
@@ -69,6 +70,7 @@ class LHClientTest extends TestCase {
                 'GET',
                 '200',
                 '2018-03-31T15:03:01+00:00',
+                123,
                 '3ee9e546c0a3811697e424f94ee70bc1',
                 'Firefox'
             ]);
