@@ -29,3 +29,27 @@ class MemLogBuffer implements LogBuffer {
     }
 
 }
+
+class FileLogBuffer implements LogBuffer {
+    private $fileLocation;
+
+    public function __construct($fileLocation) {
+        $this->fileLocation = $fileLocation;
+    }
+
+    public function push($logEvent) {
+        file_put_contents($this->fileLocation, serialize($logEvent->row())."\n", FILE_APPEND | LOCK_EX);
+    }
+
+    public function sizeInBytes() {
+        if(!file_exists($this->fileLocation)) {
+            return 0;
+        }
+        return filesize($this->fileLocation);
+    }
+
+    public function dump() {
+
+    }
+
+}
