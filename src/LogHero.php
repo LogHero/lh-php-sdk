@@ -5,38 +5,39 @@ require_once __DIR__ . '/LogEvent.php';
 
 class LHClient {
     private $apiAccess;
-    private $logEventsPerRecord = 25;
-    private $logEvents = array();
+    private $logBuffer;
+    private $maxRecordSizeInBytes;
 
-    public function __construct($apiAccess, $logEventsPerRecord=25) {
+    public function __construct($apiAccess, $logBuffer, $maxRecordSizeInBytes=3000) {
         $this->apiAccess = $apiAccess;
-        $this->logEventsPerRecord = $logEventsPerRecord;
+        $this->logBuffer = $logBuffer;
+        $this->maxRecordSizeInBytes = $maxRecordSizeInBytes;
     }
 
-    public static function create($apiKey, $clientId, $logEndpoint='https://development.loghero.io/logs/') {
-        return new LHClient(new APIAccessCurl($apiKey, $clientId, $logEndpoint));
+    public static function create($apiKey, $clientId, $logBuffer, $logEndpoint='https://development.loghero.io/logs/') {
+        return new LHClient(new APIAccessCurl($apiKey, $clientId, $logEndpoint), $logBuffer);
     }
 
     public function submit($logEvent) {
-        array_push($this->logEvents, $logEvent);
-        if (count($this->logEvents) >= $this->logEventsPerRecord) {
+        $this->logBuffer->push($logEvent);
+        if ($this->logBuffer->sizeInBytes() >= $this->maxRecordSizeInBytes) {
             $this->flush();
         }
     }
 
     public function flush() {
-        if (count($this->logEvents) == 0) {
+        if ($this->logBuffer->sizeInBytes() == 0) {
             return;
         }
-        $payload = $this->buildPayload();
+        $payload = $this->buildPayload($this->logBuffer->dump());
         $this->send($payload);
         $this->logEvents = array();
     }
 
-    private function buildPayload() {
+    private function buildPayload($logEvents) {
         $rows = array();
         $columns = NULL;
-        foreach ($this->logEvents as $logEvent) {
+        foreach ($logEvents as $logEvent) {
             array_push($rows, $logEvent->row());
             if (is_null($columns)) {
                 $columns = $logEvent->columns();

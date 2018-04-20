@@ -1,17 +1,23 @@
 <?php
 require_once __DIR__ . '/../src/LogHero.php';
+require_once __DIR__ . '/../src/LogBuffer.php';
+
 
 use PHPUnit\Framework\TestCase;
 
 class LHClientTest extends TestCase {
     private $apiAccessStub;
     private $logHeroClient;
-    private $logEventsPerRecord = 3;
+    private $maxRecordSizeInBytes = 300;
 
     public function setUp()
     {
         $this->apiAccessStub = $this->createMock(APIAccess::class);
-        $this->logHeroClient = new LHClient($this->apiAccessStub, $this->logEventsPerRecord);
+        $this->logHeroClient = new LHClient(
+            $this->apiAccessStub,
+            new MemLogBuffer(100),
+            $this->maxRecordSizeInBytes
+        );
     }
 
     public function testSubmitNothingIfNoLogsRecorded() {
