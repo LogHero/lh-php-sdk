@@ -53,7 +53,7 @@ $logStringArray = array(
 );
 
 
-$logHero = LHClient::create('YOUR_API_KEY', 'YOUR CLIENT ID', new MemLogBuffer());
+$logHero = LHClient::create('YOUR_API_KEY', 'YOUR CLIENT ID', new FileLogBuffer(__DIR__ . '/buffer.loghero.io.txt'));
 foreach ($logStringArray as $logString) {
     print('Submitting '.$logString."\n");
     $lhLogEvent = createLogEvent($logString);

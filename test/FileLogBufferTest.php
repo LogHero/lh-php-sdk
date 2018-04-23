@@ -7,6 +7,9 @@ require_once __DIR__ . '/Util.php';
 use PHPUnit\Framework\TestCase;
 
 
+// TODO Use process id and thread id to handle concurrent access to log files
+// http://php.net/manual/de/function.zend-thread-id.php
+// http://php.net/manual/de/function.getmypid.php
 class FileLogBufferTest extends TestCase {
     private $bufferFileLocation = __DIR__ . '/buffer.loghero.io.txt';
     private $logBuffer;
