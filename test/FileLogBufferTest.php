@@ -33,11 +33,36 @@ class FileLogBufferTest extends TestCase {
         $this->assertEquals(0, $this->logBuffer->sizeInBytes());
         $this->logBuffer->push(createLogEvent('/page-1'));
         clearstatcache();
-        $this->assertEquals(226, $this->logBuffer->sizeInBytes());
+        $this->assertEquals(330, $this->logBuffer->sizeInBytes());
         $this->logBuffer->push(createLogEvent('/page-2'));
         $this->logBuffer->push(createLogEvent('/page-3'));
         clearstatcache();
-        $this->assertEquals(678, $this->logBuffer->sizeInBytes());
+        $this->assertEquals(990, $this->logBuffer->sizeInBytes());
+    }
+
+    public function testDeleteBufferFileOnDump() {
+        $logEvents = $this->logBuffer->dump();
+        $this->assertEmpty($logEvents);
+        $this->logBuffer->push(createLogEvent('/page-1'));
+        $this->logBuffer->push(createLogEvent('/page-2'));
+        $this->logBuffer->push(createLogEvent('/page-3'));
+        clearstatcache();
+        $this->assertEquals(990, $this->logBuffer->sizeInBytes());
+        $logEvents = $this->logBuffer->dump();
+        assertLandingPagePathsInLogEvents($this, $logEvents, array(
+            '/page-1',
+            '/page-2',
+            '/page-3'
+        ));
+        clearstatcache();
+        $this->assertEquals(0, $this->logBuffer->sizeInBytes());
+        $this->logBuffer->push(createLogEvent('/page-4'));
+        $this->logBuffer->push(createLogEvent('/page-5'));
+        $logEvents = $this->logBuffer->dump();
+        assertLandingPagePathsInLogEvents($this, $logEvents, array(
+            '/page-4',
+            '/page-5'
+        ));
     }
     
 }

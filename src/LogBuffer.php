@@ -1,5 +1,9 @@
 <?php
 
+
+require_once __DIR__ . '/LogEvent.php';
+
+
 interface LogBuffer {
     public function push($logEvent);
     public function sizeInBytes();
@@ -38,7 +42,7 @@ class FileLogBuffer implements LogBuffer {
     }
 
     public function push($logEvent) {
-        file_put_contents($this->fileLocation, serialize($logEvent->row())."\n", FILE_APPEND | LOCK_EX);
+        file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND | LOCK_EX);
     }
 
     public function sizeInBytes() {
@@ -49,7 +53,18 @@ class FileLogBuffer implements LogBuffer {
     }
 
     public function dump() {
-
+        $logEvents = array();
+        if(file_exists($this->fileLocation)) {
+            $handle = fopen($this->fileLocation, 'r');
+            if ($handle) {
+                while (($logEventLine = fgets($handle)) !== false) {
+                    array_push($logEvents, unserialize($logEventLine));
+                }
+                fclose($handle);
+            }
+            unlink($this->fileLocation);
+        }
+        return $logEvents;
     }
 
 }
