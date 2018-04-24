@@ -1,12 +1,14 @@
 <?php
+namespace LogHero\Client;
+
 require_once __DIR__ . '/../src/LogHeroDebug.php';
 
 use PHPUnit\Framework\TestCase;
 
-class LHDebugLogEventTest extends TestCase {
+class DebugLogEventTest extends TestCase {
 
     public function testSendsRawIpAddress() {
-        $logEvent = new LHDebugLogEvent();
+        $logEvent = new DebugLogEvent();
         $logEvent
             ->setIpAddress('123.456.78.9')
             ->setHostName('www.example.com')
@@ -14,7 +16,7 @@ class LHDebugLogEventTest extends TestCase {
             ->setMethod('GET')
             ->setStatusCode('200')
             ->setUserAgent('Firefox')
-            ->setTimestamp(new DateTime('2018-03-31T15:03:01Z'));
+            ->setTimestamp(new \DateTime('2018-03-31T15:03:01Z'));
         $this->assertEquals($logEvent->columns()[9], 'rawIp');
         $this->assertEquals($logEvent->row()[9], '123.456.78.9');
     }

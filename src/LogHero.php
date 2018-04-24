@@ -1,9 +1,10 @@
 <?php
+namespace LogHero\Client;
 require_once __DIR__ . '/APIAccess.php';
 require_once __DIR__ . '/LogEvent.php';
 
 
-class LHClient {
+class Client {
     private $apiAccess;
     private $logBuffer;
     private $maxRecordSizeInBytes;
@@ -15,7 +16,7 @@ class LHClient {
     }
 
     public static function create($apiKey, $clientId, $logBuffer, $logEndpoint='https://development.loghero.io/logs/') {
-        return new LHClient(new APIAccessCurl($apiKey, $clientId, $logEndpoint), $logBuffer);
+        return new Client(new APIAccessCurl($apiKey, $clientId, $logEndpoint), $logBuffer);
     }
 
     public function submit($logEvent) {

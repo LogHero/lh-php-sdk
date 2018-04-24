@@ -1,7 +1,10 @@
 <?php
+namespace LogHero\Client;
+require_once __DIR__ . '/../src/LogEvent.php';
+
 
 function createLogEvent($landingPagePath) {
-    $logEvent = new LHLogEvent();
+    $logEvent = new LogEvent();
     $logEvent
         ->setUserAgent('Firefox')
         ->setIpAddress('123.45.67.89')
@@ -9,7 +12,7 @@ function createLogEvent($landingPagePath) {
         ->setLandingPagePath($landingPagePath)
         ->setMethod('GET')
         ->setStatusCode(200)
-        ->setTimestamp(new DateTime('2018-03-31T15:03:01Z'));
+        ->setTimestamp(new \DateTime('2018-03-31T15:03:01Z'));
     return $logEvent;
 }
 

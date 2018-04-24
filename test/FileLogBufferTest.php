@@ -1,4 +1,5 @@
 <?php
+namespace LogHero\Client;
 require_once __DIR__ . '/../src/LogBuffer.php';
 require_once __DIR__ . '/../src/LogEvent.php';
 require_once __DIR__ . '/Util.php';
@@ -36,11 +37,11 @@ class FileLogBufferTest extends TestCase {
         $this->assertEquals(0, $this->logBuffer->sizeInBytes());
         $this->logBuffer->push(createLogEvent('/page-1'));
         clearstatcache();
-        $this->assertEquals(330, $this->logBuffer->sizeInBytes());
+        $this->assertEquals(343, $this->logBuffer->sizeInBytes());
         $this->logBuffer->push(createLogEvent('/page-2'));
         $this->logBuffer->push(createLogEvent('/page-3'));
         clearstatcache();
-        $this->assertEquals(990, $this->logBuffer->sizeInBytes());
+        $this->assertEquals(1029, $this->logBuffer->sizeInBytes());
     }
 
     public function testDeleteBufferFileOnDump() {
@@ -50,7 +51,7 @@ class FileLogBufferTest extends TestCase {
         $this->logBuffer->push(createLogEvent('/page-2'));
         $this->logBuffer->push(createLogEvent('/page-3'));
         clearstatcache();
-        $this->assertEquals(990, $this->logBuffer->sizeInBytes());
+        $this->assertEquals(1029, $this->logBuffer->sizeInBytes());
         $logEvents = $this->logBuffer->dump();
         assertLandingPagePathsInLogEvents($this, $logEvents, array(
             '/page-1',

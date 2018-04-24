@@ -1,11 +1,12 @@
 <?php
+namespace LogHero\Client;
 
-class InvalidLogEventException extends Exception {
+class InvalidLogEventException extends \Exception {
 
 }
 
 
-class LHLogEvent {
+class LogEvent {
     protected $landingPagePath;
     protected $method;
     protected $statusCode;
@@ -46,7 +47,7 @@ class LHLogEvent {
     }
 
     function setTimestamp($timestamp) {
-        $this->timestampAsIsoString = $timestamp->format(DateTime::ATOM);
+        $this->timestampAsIsoString = $timestamp->format(\DateTime::ATOM);
         return $this;
     }
 
@@ -76,7 +77,7 @@ class LHLogEvent {
     public function row() {
         $this->verify();
         return array(
-            LHLogEvent::buildCidFromIPAndUserAgent($this->ipAddress, $this->userAgent),
+            LogEvent::buildCidFromIPAndUserAgent($this->ipAddress, $this->userAgent),
             $this->hostname,
             $this->landingPagePath,
             $this->method,
