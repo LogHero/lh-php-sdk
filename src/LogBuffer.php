@@ -36,8 +36,9 @@ class MemLogBuffer implements LogBuffer {
 class FileLogBuffer implements LogBuffer {
     private $fileLocation;
 
-    public function __construct($fileLocation) {
-        $this->fileLocation = $fileLocation;
+    public function __construct($bufferFileBaseName) {
+        $pid = getmypid();
+        $this->fileLocation = $bufferFileBaseName.'.'.$pid.'.txt';
     }
 
     public function push($logEvent) {

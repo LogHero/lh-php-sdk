@@ -8,29 +8,32 @@ require_once __DIR__ . '/Util.php';
 use PHPUnit\Framework\TestCase;
 
 
-// TODO Use process id and thread id to handle concurrent access to log files
-// http://php.net/manual/de/function.zend-thread-id.php
-// http://php.net/manual/de/function.getmypid.php
+function getmypid() {
+    return 55;
+}
+
+
 class FileLogBufferTest extends TestCase {
-    private $bufferFileLocation = __DIR__ . '/buffer.loghero.io.txt';
+    private $bufferFileBaseName = __DIR__ . '/buffer.loghero.io';
+    private $expectedBufferFileLocation = __DIR__ . '/buffer.loghero.io.55.txt';
     private $logBuffer;
 
     public function setUp() {
         parent::setUp();
-        $this->logBuffer = new FileLogBuffer($this->bufferFileLocation);
+        $this->logBuffer = new FileLogBuffer($this->bufferFileBaseName);
     }
 
     public function tearDown() {
         parent::tearDown();
-        if(file_exists($this->bufferFileLocation)) {
-            unlink($this->bufferFileLocation);
+        if(file_exists($this->expectedBufferFileLocation)) {
+            unlink($this->expectedBufferFileLocation);
         }
     }
 
     public function testCreateBufferFileWhenFirstEventArrives() {
-        $this->assertFileNotExists($this->bufferFileLocation);
+        $this->assertFileNotExists($this->expectedBufferFileLocation);
         $this->logBuffer->push(createLogEvent('/page-1'));
-        $this->assertFileExists($this->bufferFileLocation);
+        $this->assertFileExists($this->expectedBufferFileLocation);
     }
 
     public function testGetSizeInBytes() {

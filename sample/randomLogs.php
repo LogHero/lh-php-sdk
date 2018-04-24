@@ -26,7 +26,7 @@ function createLogEvent($logString) {
     $timestampAsString = str_replace('[', '', $timestampAsString);
     $timestampAsString = str_replace(']', '', $timestampAsString);
     $timestamp = DateTime::createFromFormat('d/M/Y:H:i:s', $timestampAsString);
-    $logEvent = new LHDebugLogEvent();
+    $logEvent = new \LogHero\Client\DebugLogEvent();
     $logEvent
         ->setUserAgent($userAgent)
         ->setIpAddress($logElementsSpaces[0])
@@ -53,7 +53,7 @@ $logStringArray = array(
 );
 
 
-$logHero = LHClient::create('YOUR_API_KEY', 'YOUR CLIENT ID', new FileLogBuffer(__DIR__ . '/buffer.loghero.io.txt'));
+$logHero = \LogHero\Client\Client::create('YOUR_API_KEY', 'YOUR CLIENT ID', new \LogHero\Client\FileLogBuffer(__DIR__ . '/buffer.loghero.io'));
 foreach ($logStringArray as $logString) {
     print('Submitting '.$logString."\n");
     $lhLogEvent = createLogEvent($logString);
