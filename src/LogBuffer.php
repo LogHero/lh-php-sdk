@@ -36,13 +36,16 @@ class MemLogBuffer implements LogBuffer {
 class FileLogBuffer implements LogBuffer {
     private $fileLocation;
 
-    public function __construct($bufferFileBaseName) {
-        $pid = getmypid();
-        $this->fileLocation = $bufferFileBaseName.'.'.$pid.'.txt';
+    public function __construct($bufferFileName) {
+        $this->fileLocation = $bufferFileName;
     }
 
     public function push($logEvent) {
-        file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND | LOCK_EX);
+        if (!file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND | LOCK_EX)) {
+            // TODO Raise exception here and add test case:
+            print('ERROR WRITING TO LOGHERO BUFFER FILE');
+        }
+        chmod($this->fileLocation, 0666);
     }
 
     public function sizeInBytes() {

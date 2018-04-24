@@ -8,32 +8,26 @@ require_once __DIR__ . '/Util.php';
 use PHPUnit\Framework\TestCase;
 
 
-function getmypid() {
-    return 55;
-}
-
-
 class FileLogBufferTest extends TestCase {
-    private $bufferFileBaseName = __DIR__ . '/buffer.loghero.io';
-    private $expectedBufferFileLocation = __DIR__ . '/buffer.loghero.io.55.txt';
+    private $bufferFileLocation = __DIR__ . '/buffer.loghero.io.txt';
     private $logBuffer;
 
     public function setUp() {
         parent::setUp();
-        $this->logBuffer = new FileLogBuffer($this->bufferFileBaseName);
+        $this->logBuffer = new FileLogBuffer($this->bufferFileLocation);
     }
 
     public function tearDown() {
         parent::tearDown();
-        if(file_exists($this->expectedBufferFileLocation)) {
-            unlink($this->expectedBufferFileLocation);
+        if(file_exists($this->bufferFileLocation)) {
+            unlink($this->bufferFileLocation);
         }
     }
 
     public function testCreateBufferFileWhenFirstEventArrives() {
-        $this->assertFileNotExists($this->expectedBufferFileLocation);
+        $this->assertFileNotExists($this->bufferFileLocation);
         $this->logBuffer->push(createLogEvent('/page-1'));
-        $this->assertFileExists($this->expectedBufferFileLocation);
+        $this->assertFileExists($this->bufferFileLocation);
     }
 
     public function testGetSizeInBytes() {
