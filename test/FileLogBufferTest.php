@@ -104,8 +104,8 @@ class FileLogBufferTest extends TestCase {
     public function testHandlesConcurrentAccess() {
         $this->assertFileNotExists($this->dumpedLogEventsResultFile);
         $criticalSection = null;
-        $numberOfThreads = 5;
-        $logEventsPerThread = 20;
+        $numberOfThreads = 30;
+        $logEventsPerThread = 40;
         $threads = array();
         for ($i=0; $i<$numberOfThreads; ++$i) {
             $newThread = new LogEventWorkerThread(
