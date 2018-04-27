@@ -1,5 +1,6 @@
 .idea/
 *.iml
+*.lock
 vendor/
 *.DS_Store
 *.log
