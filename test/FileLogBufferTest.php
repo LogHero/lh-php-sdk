@@ -8,8 +8,40 @@ require_once __DIR__ . '/Util.php';
 use PHPUnit\Framework\TestCase;
 
 
+class LogEventWorkerThread extends \GPhpThread {
+    private $numberOfLogEventsToWrite;
+    private $logBuffer;
+    private $resultBuffer;
+
+    public function __construct(
+        $numberOfLogEventsToWrite,
+        $bufferFileLocation,
+        $dumpedLogEventsResultFile,
+        $sharedCriticalSection
+    )
+    {
+        parent::__construct($sharedCriticalSection, false);
+        $this->numberOfLogEventsToWrite = $numberOfLogEventsToWrite;
+        $this->logBuffer = new FileLogBuffer($bufferFileLocation);
+        $this->resultBuffer = new FileLogBuffer($dumpedLogEventsResultFile);
+    }
+
+    public function run() {
+        for($i=0; $i<$this->numberOfLogEventsToWrite; ++$i) {
+            $this->logBuffer->push(createLogEvent('/page'));
+        }
+        $logEventsDumped = $this->logBuffer->dump();
+        foreach($logEventsDumped as $logEvent) {
+            $this->resultBuffer->push($logEvent);
+        }
+    }
+
+}
+
+
 class FileLogBufferTest extends TestCase {
     private $bufferFileLocation = __DIR__ . '/buffer.loghero.io.txt';
+    private $dumpedLogEventsResultFile = __DIR__ . '/buffer-dumped.loghero.io.txt';
     private $logBuffer;
 
     public function setUp() {
@@ -21,6 +53,9 @@ class FileLogBufferTest extends TestCase {
         parent::tearDown();
         if(file_exists($this->bufferFileLocation)) {
             unlink($this->bufferFileLocation);
+        }
+        if(file_exists($this->dumpedLogEventsResultFile)) {
+            unlink($this->dumpedLogEventsResultFile);
         }
     }
 
@@ -65,5 +100,29 @@ class FileLogBufferTest extends TestCase {
             '/page-5'
         ));
     }
-    
+
+    public function testHandlesConcurrentAccess() {
+        $this->assertFileNotExists($this->dumpedLogEventsResultFile);
+        $criticalSection = null;
+        $numberOfThreads = 30;
+        $logEventsPerThread = 40;
+        $threads = array();
+        for ($i=0; $i<$numberOfThreads; ++$i) {
+            $newThread = new LogEventWorkerThread(
+                $logEventsPerThread,
+                $this->bufferFileLocation,
+                $this->dumpedLogEventsResultFile,
+                $criticalSection
+            );
+            $newThread->start();
+            array_push($threads, $newThread);
+        }
+        foreach($threads as $workerThread) {
+            $workerThread->join();
+        }
+        $resultBuffer = new FileLogBuffer($this->dumpedLogEventsResultFile);
+        $logEvents = $resultBuffer->dump();
+        $this->assertEquals($numberOfThreads * $logEventsPerThread, count($logEvents));
+    }
+
 }
