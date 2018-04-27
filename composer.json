@@ -11,5 +11,8 @@
     ],
     "require-dev": {
         "phpunit/phpunit": "^5.7"
+    },
+    "require": {
+        "zhgzhg/gphpthread": "1.0.0"
     }
 }

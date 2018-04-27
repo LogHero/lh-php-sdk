@@ -8,6 +8,28 @@ require_once __DIR__ . '/Util.php';
 use PHPUnit\Framework\TestCase;
 
 
+class LogEventWorkerThread extends \GPhpThread {
+    private static $sharedCriticalSection = null;
+    private static $allowThreadExitCodes = false;
+    private $numberOfLogEventsToWrite;
+    private $logBuffer;
+
+    public function __construct($numberOfLogEventsToWrite, $bufferFileLocation)
+    {
+        parent::__construct(LogEventWorkerThread::$sharedCriticalSection, LogEventWorkerThread::$allowThreadExitCodes);
+        $this->numberOfLogEventsToWrite = $numberOfLogEventsToWrite;
+        $this->logBuffer = new FileLogBuffer($bufferFileLocation);
+    }
+
+    public function run() {
+        for($i=0; $i<$this->numberOfLogEventsToWrite; ++$i) {
+            $this->logBuffer->push(createLogEvent('/page'));
+        }
+    }
+
+}
+
+
 class FileLogBufferTest extends TestCase {
     private $bufferFileLocation = __DIR__ . '/buffer.loghero.io.txt';
     private $logBuffer;
@@ -65,5 +87,21 @@ class FileLogBufferTest extends TestCase {
             '/page-5'
         ));
     }
-    
+
+    public function testHandlesConcurrentAccess() {
+        $numberOfThreads = 20;
+        $logEventsPerThread = 20;
+        $threads = array();
+        for ($i=0; $i<$numberOfThreads; ++$i) {
+            $newThread = new LogEventWorkerThread($logEventsPerThread, $this->bufferFileLocation);
+            $newThread->start();
+            array_push($threads, $newThread);
+        }
+        foreach($threads as $workerThread) {
+            $workerThread->join();
+        }
+        $logEvents = $this->logBuffer->dump();
+        $this->assertEquals($numberOfThreads * $logEventsPerThread, count($logEvents));
+    }
+
 }

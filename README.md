@@ -11,6 +11,6 @@ php composer-setup.php --install-dir /home/user/.local/bin/ --filename=composer
 Install the required PHP extensions and run 'composer install' to load the PHP dependencies:
 
 ```
-sudo dnf install php-mbstring php-xml
+sudo dnf install php-mbstring php-xml php-posix
 composer install
 ```
