@@ -35,17 +35,21 @@ class MemLogBuffer implements LogBuffer {
 
 class FileLogBuffer implements LogBuffer {
     private $fileLocation;
+    private $lockFile;
 
     public function __construct($bufferFileName) {
         $this->fileLocation = $bufferFileName;
+        $this->lockFile = fopen($bufferFileName . '.lock', 'w');
     }
 
     public function push($logEvent) {
-        if (!file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND | LOCK_EX)) {
+        $this->lock();
+        umask(0111);
+        if (!file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND)) {
             // TODO Raise exception here and add test case:
             print('ERROR WRITING TO LOGHERO BUFFER FILE');
         }
-        chmod($this->fileLocation, 0666);
+        $this->unlock();
     }
 
     public function sizeInBytes() {
@@ -56,6 +60,7 @@ class FileLogBuffer implements LogBuffer {
     }
 
     public function dump() {
+        $this->lock();
         $logEvents = array();
         if(file_exists($this->fileLocation)) {
             $handle = fopen($this->fileLocation, 'r');
@@ -67,7 +72,17 @@ class FileLogBuffer implements LogBuffer {
             }
             unlink($this->fileLocation);
         }
+        $this->unlock();
         return $logEvents;
+    }
+
+    private function lock() {
+        $waitIfLocked = true;
+        $locked = flock($this->lockFile, LOCK_EX, $waitIfLocked);
+    }
+
+    private function unlock() {
+        flock($this->lockFile, LOCK_UN);
     }
 
 }
