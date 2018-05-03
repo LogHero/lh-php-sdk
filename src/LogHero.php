@@ -8,11 +8,13 @@ class Client {
     private $apiAccess;
     private $logBuffer;
     private $maxRecordSizeInBytes;
+    private $maxFlushTimeIntervalSeconds;
 
-    public function __construct($apiAccess, $logBuffer, $maxRecordSizeInBytes=3000) {
+    public function __construct($apiAccess, $logBuffer, $maxRecordSizeInBytes=3000, $maxFlushTimeIntervalSeconds=300) {
         $this->apiAccess = $apiAccess;
         $this->logBuffer = $logBuffer;
         $this->maxRecordSizeInBytes = $maxRecordSizeInBytes;
+        $this->maxFlushTimeIntervalSeconds = $maxFlushTimeIntervalSeconds;
     }
 
     public static function create($apiKey, $clientId, $logBuffer, $logEndpoint='https://development.loghero.io/logs/') {
@@ -21,7 +23,7 @@ class Client {
 
     public function submit($logEvent) {
         $this->logBuffer->push($logEvent);
-        if ($this->logBuffer->sizeInBytes() >= $this->maxRecordSizeInBytes) {
+        if ($this->needsFlush()) {
             $this->flush();
         }
     }
@@ -49,6 +51,24 @@ class Client {
             'columns' => $columns,
             'rows' => $rows
         );
+    }
+
+    private function needsFlush() {
+        if ($this->logBuffer->sizeInBytes() >= $this->maxRecordSizeInBytes) {
+            return true;
+        }
+        $currentUnixTimestamp = microtime();
+        $currentTimestamp = new \DateTime();
+        $currentTimestamp->setTimestamp($currentUnixTimestamp);
+        $firstLogEvent = $this->logBuffer->getFirstLogEvent();
+        if (!$firstLogEvent) {
+            return false;
+        }
+        $currentTimeIntervalSeconds = $currentTimestamp->getTimestamp() - $firstLogEvent->getTimestamp()->getTimestamp();
+        if ($currentTimeIntervalSeconds >= $this->maxFlushTimeIntervalSeconds) {
+            return true;
+        }
+        return false;
     }
 
     private function send($payload) {

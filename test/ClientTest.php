@@ -6,18 +6,28 @@ require_once __DIR__ . '/../src/LogBuffer.php';
 
 use PHPUnit\Framework\TestCase;
 
+
+$currentTime = null;
+function microtime() {
+    return $GLOBALS['currentTime'];
+}
+
+
 class ClientTest extends TestCase {
     private $apiAccessStub;
     private $logHeroClient;
-    private $maxRecordSizeInBytes = 300;
+    private $maxRecordSizeInBytes = 500;
+    private $maxTimeIntervalSeconds = 150;
 
     public function setUp()
     {
+        $GLOBALS['currentTime'] = 1523429300.8000;
         $this->apiAccessStub = $this->createMock(APIAccess::class);
         $this->logHeroClient = new Client(
             $this->apiAccessStub,
             new MemLogBuffer(100),
-            $this->maxRecordSizeInBytes
+            $this->maxRecordSizeInBytes,
+            $this->maxTimeIntervalSeconds
         );
     }
 
@@ -41,10 +51,24 @@ class ClientTest extends TestCase {
         $this->apiAccessStub
             ->expects($this->exactly(2))
             ->method('submitLogPackage')
-            ->with($this->equalTo($this->buildExpectedPayload($this->createLogEventRows(3))));
-        for ($x = 0; $x < 7; ++$x) {
+            ->with($this->equalTo($this->buildExpectedPayload($this->createLogEventRows(5))));
+        for ($x = 0; $x < 11; ++$x) {
             $this->logHeroClient->submit($this->createLogEvent());
         }
+    }
+
+    public function testSubmitLogEventsIfMaximumTimeIntervalIsReached() {
+        $this->apiAccessStub
+            ->expects($this->once())
+            ->method('submitLogPackage')
+            ->with($this->equalTo($this->buildExpectedPayload($this->createLogEventRows(3))));
+        $this->logHeroClient->submit($this->createLogEvent());
+        $timePassedSeconds = 120;
+        $GLOBALS['currentTime'] += $timePassedSeconds;
+        $this->logHeroClient->submit($this->createLogEvent());
+        $timePassedSeconds = 60;
+        $GLOBALS['currentTime'] += $timePassedSeconds;
+        $this->logHeroClient->submit($this->createLogEvent());
     }
 
     private function createLogEvent() {
@@ -57,7 +81,7 @@ class ClientTest extends TestCase {
             ->setStatusCode('200')
             ->setPageLoadTimeMilliSec(123)
             ->setUserAgent('Firefox')
-            ->setTimestamp(new \DateTime('2018-03-31T15:03:01Z'));
+            ->setTimestamp(new \DateTime('2018-04-11T06:48:20Z'));
     }
 
     private function buildExpectedPayload($rows) {
@@ -76,7 +100,7 @@ class ClientTest extends TestCase {
                 '/home',
                 'GET',
                 '200',
-                '2018-03-31T15:03:01+00:00',
+                '2018-04-11T06:48:20+00:00',
                 123,
                 '3ee9e546c0a3811697e424f94ee70bc1',
                 'Firefox'

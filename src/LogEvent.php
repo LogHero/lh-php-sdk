@@ -10,7 +10,7 @@ class LogEvent {
     protected $landingPagePath;
     protected $method;
     protected $statusCode;
-    protected $timestampAsIsoString;
+    protected $timestamp;
     protected $pageLoadTimeMilliSec;
     protected $userAgent;
     protected $ipAddress;
@@ -47,8 +47,12 @@ class LogEvent {
     }
 
     function setTimestamp($timestamp) {
-        $this->timestampAsIsoString = $timestamp->format(\DateTime::ATOM);
+        $this->timestamp = $timestamp;
         return $this;
+    }
+
+    function getTimestamp() {
+        return $this->timestamp;
     }
 
     function setPageLoadTimeMilliSec($pageLoadTimeMilliSec) {
@@ -82,7 +86,7 @@ class LogEvent {
             $this->landingPagePath,
             $this->method,
             $this->statusCode,
-            $this->timestampAsIsoString,
+            $this->timestamp->format(\DateTime::ATOM),
             $this->pageLoadTimeMilliSec,
             hash('md5', $this->ipAddress),
             $this->userAgent
@@ -94,7 +98,7 @@ class LogEvent {
         $this->ensureSet($this->userAgent, 'User agent');
         $this->ensureSet($this->ipAddress, 'Ip address');
         $this->ensureSet($this->hostname, 'Hostname');
-        $this->ensureSet($this->timestampAsIsoString, 'Timestamp');
+        $this->ensureSet($this->timestamp, 'Timestamp');
     }
 
     private static function ensureSet($property, $propertyName) {
