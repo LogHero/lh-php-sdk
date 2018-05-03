@@ -4,8 +4,54 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6990fb18f6d4ba3c611d49f7d25b3680",
-    "packages": [],
+    "content-hash": "9f2abcccbeed7631704cfa213d909307",
+    "packages": [
+        {
+            "name": "zhgzhg/gphpthread",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zhgzhg/GPhpThread.git",
+                "reference": "05b15652a98b683548d3982aaddc464a72c7b496"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zhgzhg/GPhpThread/zipball/05b15652a98b683548d3982aaddc464a72c7b496",
+                "reference": "05b15652a98b683548d3982aaddc464a72c7b496",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcntl": "*",
+                "ext-posix": "*",
+                "php": ">=5.3"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "GPhpThread.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Generic PHP Threads library using only pure PHP",
+            "homepage": "https://github.com/zhgzhg/gphpthread",
+            "keywords": [
+                "Thread",
+                "async",
+                "asynchronous",
+                "concurrent",
+                "fork",
+                "multithreading",
+                "parallel",
+                "pcntl",
+                "posix",
+                "shell"
+            ],
+            "time": "2017-10-18T15:47:25+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",

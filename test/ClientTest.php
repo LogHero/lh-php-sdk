@@ -1,17 +1,24 @@
 <?php
+namespace LogHero\Client;
 require_once __DIR__ . '/../src/LogHero.php';
+require_once __DIR__ . '/../src/LogBuffer.php';
+
 
 use PHPUnit\Framework\TestCase;
 
-class LHClientTest extends TestCase {
+class ClientTest extends TestCase {
     private $apiAccessStub;
     private $logHeroClient;
-    private $logEventsPerRecord = 3;
+    private $maxRecordSizeInBytes = 300;
 
     public function setUp()
     {
         $this->apiAccessStub = $this->createMock(APIAccess::class);
-        $this->logHeroClient = new LHClient($this->apiAccessStub, $this->logEventsPerRecord);
+        $this->logHeroClient = new Client(
+            $this->apiAccessStub,
+            new MemLogBuffer(100),
+            $this->maxRecordSizeInBytes
+        );
     }
 
     public function testSubmitNothingIfNoLogsRecorded() {
@@ -41,7 +48,7 @@ class LHClientTest extends TestCase {
     }
 
     private function createLogEvent() {
-        $logEvent = new LHLogEvent();
+        $logEvent = new LogEvent();
         return $logEvent
             ->setIpAddress('123.456.78.9')
             ->setHostName('www.example.com')
@@ -50,7 +57,7 @@ class LHClientTest extends TestCase {
             ->setStatusCode('200')
             ->setPageLoadTimeMilliSec(123)
             ->setUserAgent('Firefox')
-            ->setTimestamp(new DateTime('2018-03-31T15:03:01Z'));
+            ->setTimestamp(new \DateTime('2018-03-31T15:03:01Z'));
     }
 
     private function buildExpectedPayload($rows) {

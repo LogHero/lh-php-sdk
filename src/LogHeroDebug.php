@@ -1,7 +1,8 @@
 <?php
+namespace LogHero\Client;
 require_once __DIR__ . '/LogHero.php';
 
-class LHDebugLogEvent extends LHLogEvent  {
+class DebugLogEvent extends LogEvent  {
 
     public function columns() {
         $columns = parent::columns();

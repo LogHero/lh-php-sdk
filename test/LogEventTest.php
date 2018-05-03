@@ -1,9 +1,10 @@
 <?php
+namespace LogHero\Client;
 require_once __DIR__ . '/../src/LogHero.php';
 
 use PHPUnit\Framework\TestCase;
 
-class LHLogEventTest extends TestCase {
+class LogEventTest extends TestCase {
 
     public function testCreateColumns() {
         $logEvent = $this->createValidLogEvent();
@@ -26,7 +27,7 @@ class LHLogEventTest extends TestCase {
     }
 
     /**
-     * @expectedException InvalidLogEventException
+     * @expectedException LogHero\Client\InvalidLogEventException
      * @expectedExceptionMessage Log event is incomplete: Landing page path is null
      */
     public function testVerifyLandingPagePathSet() {
@@ -36,7 +37,7 @@ class LHLogEventTest extends TestCase {
     }
 
     /**
-     * @expectedException InvalidLogEventException
+     * @expectedException LogHero\Client\InvalidLogEventException
      */
     public function testVerifyUserAgentSet() {
         $logEvent = $this->createValidLogEvent();
@@ -45,7 +46,7 @@ class LHLogEventTest extends TestCase {
     }
 
     /**
-     * @expectedException InvalidLogEventException
+     * @expectedException LogHero\Client\InvalidLogEventException
      */
     public function testVerifyIpAddressSet() {
         $logEvent = $this->createValidLogEvent();
@@ -54,7 +55,7 @@ class LHLogEventTest extends TestCase {
     }
 
     /**
-     * @expectedException InvalidLogEventException
+     * @expectedException LogHero\Client\InvalidLogEventException
      */
     public function testVerifyHostnameSet() {
         $logEvent = $this->createValidLogEvent();
@@ -63,10 +64,10 @@ class LHLogEventTest extends TestCase {
     }
 
     /**
-     * @expectedException InvalidLogEventException
+     * @expectedException LogHero\Client\InvalidLogEventException
      */
     public function testVerifyTimestampSet() {
-        $logEvent = new LHLogEvent();
+        $logEvent = new LogEvent();
         $logEvent
             ->setIpAddress('123.456.78.9')
             ->setHostName('www.example.com')
@@ -95,7 +96,7 @@ class LHLogEventTest extends TestCase {
     }
 
     private function createValidLogEvent() {
-        $logEvent = new LHLogEvent();
+        $logEvent = new LogEvent();
         $logEvent
             ->setIpAddress('123.456.78.9')
             ->setHostName('www.example.com')
@@ -104,7 +105,7 @@ class LHLogEventTest extends TestCase {
             ->setStatusCode('200')
             ->setUserAgent('Firefox')
             ->setPageLoadTimeMilliSec(150)
-            ->setTimestamp(new DateTime('2018-03-31T15:03:01Z'));
+            ->setTimestamp(new \DateTime('2018-03-31T15:03:01Z'));
         return $logEvent;
     }
 

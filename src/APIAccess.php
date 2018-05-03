@@ -1,10 +1,11 @@
 <?php
+namespace LogHero\Client;
 
 interface APIAccess {
     public function submitLogPackage($payloadAsJson);
 }
 
-class APIAccessException extends Exception {
+class APIAccessException extends \Exception {
     
 }
 

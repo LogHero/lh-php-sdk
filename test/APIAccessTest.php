@@ -1,4 +1,5 @@
 <?php
+namespace LogHero\Client;
 require_once __DIR__ . '/../src/APIAccess.php';
 
 use PHPUnit\Framework\TestCase;
@@ -69,7 +70,7 @@ class APIAccessCurlTest extends TestCase {
     }
 
     /**
-     * @expectedException APIAccessException
+     * @expectedException LogHero\Client\APIAccessException
      * @expectedExceptionMessage Call to URL https://www.loghero.io/logs/ failed with status 500; Message: Server error
      */
     public function testExceptionIfErrorResponse() {
