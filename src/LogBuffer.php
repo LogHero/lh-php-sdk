@@ -6,9 +6,12 @@ require_once __DIR__ . '/LogEvent.php';
 interface LogBuffer {
     public function push($logEvent);
     public function sizeInBytes();
+    public function getFirstLogEvent();
     public function dump();
 }
 
+
+// TODO Is not thread safe yet
 class MemLogBuffer implements LogBuffer {
     private $logEvents = array();
     private $estimatedLogEventSizeInBytes;
@@ -23,6 +26,13 @@ class MemLogBuffer implements LogBuffer {
 
     public function sizeInBytes() {
         return count($this->logEvents) * $this->estimatedLogEventSizeInBytes;
+    }
+
+    public function getFirstLogEvent() {
+        if (count($this->logEvents) == 0) {
+            return null;
+        }
+        return $this->logEvents[0];
     }
 
     public function dump() {
