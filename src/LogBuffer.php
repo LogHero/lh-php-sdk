@@ -59,6 +59,23 @@ class FileLogBuffer implements LogBuffer {
         return filesize($this->fileLocation);
     }
 
+    // TODO: Get first log event in push method to avoid accessing the log file twice
+    public function getFirstLogEvent() {
+        $this->lock();
+        $firsLogEvent = null;
+        if(file_exists($this->fileLocation)) {
+            $handle = fopen($this->fileLocation, 'r');
+            if ($handle) {
+                $logEventLine = fgets($handle);
+                if ($logEventLine) {
+                    $firsLogEvent = unserialize($logEventLine);
+                }
+            }
+        }
+        $this->unlock();
+        return $firsLogEvent;
+    }
+
     public function dump() {
         $this->lock();
         $logEvents = array();
