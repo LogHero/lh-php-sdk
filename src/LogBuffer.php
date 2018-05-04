@@ -46,6 +46,7 @@ class MemLogBuffer implements LogBuffer {
 class FileLogBuffer implements LogBuffer {
     private $fileLocation;
     private $lockFile;
+    private $firstLogEvent = null;
 
     public function __construct($bufferFileName) {
         $this->fileLocation = $bufferFileName;
@@ -55,10 +56,22 @@ class FileLogBuffer implements LogBuffer {
     public function push($logEvent) {
         $this->lock();
         umask(0111);
-        if (!file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND)) {
-            // TODO Raise exception here and add test case:
+        $handle = fopen($this->fileLocation, 'c+');
+        if (!$handle) {
+            // TODO Not tested yet
             print('ERROR WRITING TO LOGHERO BUFFER FILE');
+            $this->unlock();
+            return;
         }
+        $firstLogEventLine = fgets($handle);
+        if ($firstLogEventLine) {
+            $this->firstLogEvent = unserialize($firstLogEventLine);
+        }
+        else {
+            $this->firstLogEvent = $logEvent;
+        }
+        fseek($handle, 0, SEEK_END);
+        fwrite($handle, serialize($logEvent)."\n");
         $this->unlock();
     }
 
@@ -69,35 +82,22 @@ class FileLogBuffer implements LogBuffer {
         return filesize($this->fileLocation);
     }
 
-    // TODO: Get first log event in push method to avoid accessing the log file twice
     public function getFirstLogEvent() {
-        $this->lock();
-        $firsLogEvent = null;
-        if(file_exists($this->fileLocation)) {
-            $handle = fopen($this->fileLocation, 'r');
-            if ($handle) {
-                $logEventLine = fgets($handle);
-                if ($logEventLine) {
-                    $firsLogEvent = unserialize($logEventLine);
-                }
-            }
-        }
-        $this->unlock();
-        return $firsLogEvent;
+        return $this->firstLogEvent;
     }
 
     public function dump() {
         $this->lock();
         $logEvents = array();
         if(file_exists($this->fileLocation)) {
-            $handle = fopen($this->fileLocation, 'r');
+            $handle = fopen($this->fileLocation, 'r+');
             if ($handle) {
                 while (($logEventLine = fgets($handle)) !== false) {
                     array_push($logEvents, unserialize($logEventLine));
                 }
+                ftruncate($handle, 0);
                 fclose($handle);
             }
-            unlink($this->fileLocation);
         }
         $this->unlock();
         return $logEvents;
@@ -105,7 +105,7 @@ class FileLogBuffer implements LogBuffer {
 
     private function lock() {
         $waitIfLocked = true;
-        $locked = flock($this->lockFile, LOCK_EX, $waitIfLocked);
+        flock($this->lockFile, LOCK_EX, $waitIfLocked);
     }
 
     private function unlock() {
