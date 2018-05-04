@@ -7,7 +7,6 @@ require_once __DIR__ . '/../src/LogBuffer.php';
 use PHPUnit\Framework\TestCase;
 
 
-$currentTime = null;
 function microtime() {
     return $GLOBALS['currentTime'];
 }

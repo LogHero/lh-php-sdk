@@ -50,12 +50,13 @@ class FileLogBuffer implements LogBuffer {
 
     public function __construct($bufferFileName) {
         $this->fileLocation = $bufferFileName;
-        $this->lockFile = fopen($bufferFileName . '.lock', 'w');
+        $lockFileLocation = $bufferFileName . '.lock';
+        $this->lockFile = fopen($lockFileLocation, 'w');
+        chmod($lockFileLocation, 0666);
     }
 
     public function push($logEvent) {
         $this->lock();
-        umask(0111);
         $handle = fopen($this->fileLocation, 'c+');
         if (!$handle) {
             // TODO Not tested yet
@@ -72,6 +73,8 @@ class FileLogBuffer implements LogBuffer {
         }
         fseek($handle, 0, SEEK_END);
         fwrite($handle, serialize($logEvent)."\n");
+        fclose($handle);
+        chmod($this->fileLocation, 0666);
         $this->unlock();
     }
 

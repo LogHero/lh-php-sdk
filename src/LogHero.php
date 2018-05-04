@@ -10,7 +10,7 @@ class Client {
     private $maxRecordSizeInBytes;
     private $maxFlushTimeIntervalSeconds;
 
-    public function __construct($apiAccess, $logBuffer, $maxRecordSizeInBytes=3000, $maxFlushTimeIntervalSeconds=300) {
+    public function __construct($apiAccess, $logBuffer, $maxRecordSizeInBytes=30000, $maxFlushTimeIntervalSeconds=300) {
         $this->apiAccess = $apiAccess;
         $this->logBuffer = $logBuffer;
         $this->maxRecordSizeInBytes = $maxRecordSizeInBytes;
@@ -57,13 +57,13 @@ class Client {
         if ($this->logBuffer->sizeInBytes() >= $this->maxRecordSizeInBytes) {
             return true;
         }
-        $currentUnixTimestamp = microtime();
-        $currentTimestamp = new \DateTime();
-        $currentTimestamp->setTimestamp($currentUnixTimestamp);
         $firstLogEvent = $this->logBuffer->getFirstLogEvent();
         if (!$firstLogEvent) {
             return false;
         }
+        $currentUnixTimestamp = microtime(true);
+        $currentTimestamp = new \DateTime();
+        $currentTimestamp->setTimestamp($currentUnixTimestamp);
         $currentTimeIntervalSeconds = $currentTimestamp->getTimestamp() - $firstLogEvent->getTimestamp()->getTimestamp();
         if ($currentTimeIntervalSeconds >= $this->maxFlushTimeIntervalSeconds) {
             return true;
