@@ -89,7 +89,7 @@ class FileLogBuffer implements LogBuffer {
     public function dump() {
         $this->lock();
         $logEvents = array();
-        if(file_exists($this->fileLocation)) {
+        try {
             $handle = fopen($this->fileLocation, 'r+');
             if ($handle) {
                 while (($logEventLine = fgets($handle)) !== false) {
@@ -99,13 +99,24 @@ class FileLogBuffer implements LogBuffer {
                 fclose($handle);
             }
         }
+        catch(\Exception $e) {
+        }
         $this->unlock();
         return $logEvents;
     }
 
     private function lock() {
-        $waitIfLocked = true;
-        flock($this->lockFile, LOCK_EX, $waitIfLocked);
+        $timeoutMilliSec = 2000;
+        $lockIntervalMilliSec = 10;
+        $waitIfLocked = false;
+        while($timeoutMilliSec > 0) {
+            if(flock($this->lockFile, LOCK_EX | LOCK_NB, $waitIfLocked)) {
+                return;
+            }
+            $timeoutMilliSec -= $lockIntervalMilliSec;
+            usleep($lockIntervalMilliSec * 1000);
+        }
+        throw new \Exception('Cannot acquire lock to write to log file.');
     }
 
     private function unlock() {
