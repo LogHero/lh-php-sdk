@@ -69,11 +69,11 @@ class FileLogBufferTest extends TestCase {
         $this->assertEquals(0, $this->logBuffer->sizeInBytes());
         $this->logBuffer->push(createLogEvent('/page-1'));
         clearstatcache();
-        $this->assertEquals(343, $this->logBuffer->sizeInBytes());
+        $this->assertEquals(411, $this->logBuffer->sizeInBytes());
         $this->logBuffer->push(createLogEvent('/page-2'));
         $this->logBuffer->push(createLogEvent('/page-3'));
         clearstatcache();
-        $this->assertEquals(1029, $this->logBuffer->sizeInBytes());
+        $this->assertEquals(1233, $this->logBuffer->sizeInBytes());
     }
 
     public function testDeleteBufferFileOnDump() {
@@ -83,7 +83,7 @@ class FileLogBufferTest extends TestCase {
         $this->logBuffer->push(createLogEvent('/page-2'));
         $this->logBuffer->push(createLogEvent('/page-3'));
         clearstatcache();
-        $this->assertEquals(1029, $this->logBuffer->sizeInBytes());
+        $this->assertEquals(1233, $this->logBuffer->sizeInBytes());
         $logEvents = $this->logBuffer->dump();
         assertLandingPagePathsInLogEvents($this, $logEvents, array(
             '/page-1',
@@ -99,6 +99,15 @@ class FileLogBufferTest extends TestCase {
             '/page-4',
             '/page-5'
         ));
+    }
+
+    public function testGetFirstLogEvent() {
+        $this->assertNull($this->logBuffer->getFirstLogEvent());
+        $this->logBuffer->push(createLogEvent('/page-1'));
+        $this->assertEquals($this->logBuffer->getFirstLogEvent()->row()[2], '/page-1');
+        $this->logBuffer->push(createLogEvent('/page-2'));
+        $this->logBuffer->push(createLogEvent('/page-3'));
+        $this->assertEquals($this->logBuffer->getFirstLogEvent()->row()[2], '/page-1');
     }
 
     public function testHandlesConcurrentAccess() {
