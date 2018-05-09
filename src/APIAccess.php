@@ -57,11 +57,12 @@ class APIAccessCurl extends APIAccessBase {
         $curlClient = $this->createCurlClient($this->apiLogPackageEndpoint);
         $curlClient->setOpt(CURLOPT_HTTPHEADER, array(
             'Content-type: application/json',
+            'Content-encoding: deflate',
             'Authorization: '.$this->apiKey,
             'User-Agent: '.$this->userAgent
         ));
         $curlClient->setOpt(CURLOPT_CUSTOMREQUEST, 'PUT');
-        $curlClient->setOpt(CURLOPT_POSTFIELDS, $payloadAsJson);
+        $curlClient->setOpt(CURLOPT_POSTFIELDS, gzcompress($payloadAsJson));
         $curlClient->exec();
         $status = $curlClient->getInfo(CURLINFO_HTTP_CODE);
         if ( $status >= 300 ) {
