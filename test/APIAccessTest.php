@@ -45,6 +45,7 @@ class APIAccessCurlTest extends TestCase {
             ->method('setOpt')
             ->with($this->equalTo(CURLOPT_HTTPHEADER), $this->equalTo(array(
                 'Content-type: application/json',
+                'Content-encoding: deflate',
                 'Authorization: LH-1234',
                 'User-Agent: '.$this->expectedUserAgent
             )));
@@ -55,7 +56,7 @@ class APIAccessCurlTest extends TestCase {
         $this->curlClientMock
             ->expects($this->at(2))
             ->method('setOpt')
-            ->with($this->equalTo(CURLOPT_POSTFIELDS), $this->equalTo('LOG DATA'));
+            ->with($this->equalTo(CURLOPT_POSTFIELDS), $this->equalTo(gzcompress('LOG DATA')));
         $this->curlClientMock
             ->expects($this->once())
             ->method('exec');

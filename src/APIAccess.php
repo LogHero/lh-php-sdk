@@ -16,7 +16,7 @@ abstract class APIAccessBase implements APIAccess {
     public function __construct($apiKey, $clientId, $apiLogPackageEndpoint) {
         $this->apiKey = $apiKey;
         $this->apiLogPackageEndpoint = $apiLogPackageEndpoint;
-        $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.1.1';
+        $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.2.0';
     }
 
 }
@@ -57,11 +57,12 @@ class APIAccessCurl extends APIAccessBase {
         $curlClient = $this->createCurlClient($this->apiLogPackageEndpoint);
         $curlClient->setOpt(CURLOPT_HTTPHEADER, array(
             'Content-type: application/json',
+            'Content-encoding: deflate',
             'Authorization: '.$this->apiKey,
             'User-Agent: '.$this->userAgent
         ));
         $curlClient->setOpt(CURLOPT_CUSTOMREQUEST, 'PUT');
-        $curlClient->setOpt(CURLOPT_POSTFIELDS, $payloadAsJson);
+        $curlClient->setOpt(CURLOPT_POSTFIELDS, gzcompress($payloadAsJson));
         $curlClient->exec();
         $status = $curlClient->getInfo(CURLINFO_HTTP_CODE);
         if ( $status >= 300 ) {
