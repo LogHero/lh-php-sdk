@@ -15,6 +15,7 @@ class LogEvent {
     protected $userAgent;
     protected $ipAddress;
     protected $hostname;
+    protected $referer = null;
 
     function setHostname($hostname) {
         $this->hostname = $hostname;
@@ -38,6 +39,11 @@ class LogEvent {
 
     function setUserAgent($userAgent) {
         $this->userAgent = $userAgent;
+        return $this;
+    }
+
+    function setReferer($referer) {
+        $this->referer = $referer;
         return $this;
     }
 
@@ -74,7 +80,8 @@ class LogEvent {
             'timestamp',
             'pageLoadTime',
             'ip',
-            'ua'
+            'ua',
+            'referer'
         );
     }
 
@@ -89,7 +96,8 @@ class LogEvent {
             $this->timestamp->format(\DateTime::ATOM),
             $this->pageLoadTimeMilliSec,
             hash('md5', $this->ipAddress),
-            $this->userAgent
+            $this->userAgent,
+            $this->getExternalReferer()
         );
     }
 
@@ -105,6 +113,13 @@ class LogEvent {
         if (!$property) {
             throw new InvalidLogEventException('Log event is incomplete: ' . $propertyName . ' is null');
         }
+    }
+
+    private function getExternalReferer() {
+        if ($this->referer == 'direct') {
+            return null;
+        }
+        return $this->referer;
     }
 
 }
