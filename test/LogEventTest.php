@@ -5,10 +5,11 @@ require_once __DIR__ . '/../src/LogHero.php';
 use PHPUnit\Framework\TestCase;
 
 class LogEventTest extends TestCase {
+    private $refererColumnIdx = 9;
 
     public function testCreateColumns() {
         $logEvent = $this->createValidLogEvent();
-        $this->assertEquals(count($logEvent->columns()), 9);
+        $this->assertEquals(count($logEvent->columns()), 10);
     }
 
     public function testCreateRowFromLogEventData() {
@@ -22,7 +23,8 @@ class LogEventTest extends TestCase {
             '2018-03-31T15:03:01+00:00',
             150,
             '3ee9e546c0a3811697e424f94ee70bc1',
-            'Firefox'
+            'Firefox',
+            null
         ]);
     }
 
@@ -90,9 +92,23 @@ class LogEventTest extends TestCase {
             '2018-03-31T15:03:01+00:00',
             null,
             '3ee9e546c0a3811697e424f94ee70bc1',
-            'Firefox'
+            'Firefox',
+            null
         ]);
         $logEvent->row();
+    }
+
+    public function testSendReferer() {
+        $logEvent = $this->createValidLogEvent();
+        $this->assertNull($logEvent->row()[$this->refererColumnIdx]);
+        $logEvent->setReferer('https://www.loghero.io');
+        $this->assertEquals($logEvent->row()[$this->refererColumnIdx], 'https://www.loghero.io');
+    }
+
+    public function testDoNotSendRefererIfDirect() {
+        $logEvent = $this->createValidLogEvent();
+        $logEvent->setReferer('direct');
+        $this->assertNull($logEvent->row()[$this->refererColumnIdx]);
     }
 
     private function createValidLogEvent() {

@@ -17,8 +17,8 @@ class DebugLogEventTest extends TestCase {
             ->setStatusCode('200')
             ->setUserAgent('Firefox')
             ->setTimestamp(new \DateTime('2018-03-31T15:03:01Z'));
-        $this->assertEquals($logEvent->columns()[9], 'rawIp');
-        $this->assertEquals($logEvent->row()[9], '123.456.78.9');
+        $this->assertEquals($logEvent->columns()[10], 'rawIp');
+        $this->assertEquals($logEvent->row()[10], '123.456.78.9');
     }
 
 }

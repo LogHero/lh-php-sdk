@@ -80,12 +80,13 @@ class ClientTest extends TestCase {
             ->setStatusCode('200')
             ->setPageLoadTimeMilliSec(123)
             ->setUserAgent('Firefox')
+            ->setReferer('https://www.loghero.io')
             ->setTimestamp(new \DateTime('2018-04-11T06:48:20Z'));
     }
 
     private function buildExpectedPayload($rows) {
         return json_encode(array(
-            'columns' => ['cid','hostname','landingPage','method','statusCode','timestamp', 'pageLoadTime','ip','ua'],
+            'columns' => ['cid','hostname','landingPage','method','statusCode','timestamp', 'pageLoadTime','ip','ua', 'referer'],
             'rows' => $rows
         ));
     }
@@ -102,7 +103,8 @@ class ClientTest extends TestCase {
                 '2018-04-11T06:48:20+00:00',
                 123,
                 '3ee9e546c0a3811697e424f94ee70bc1',
-                'Firefox'
+                'Firefox',
+                'https://www.loghero.io'
             ]);
         }
         return $rows;
