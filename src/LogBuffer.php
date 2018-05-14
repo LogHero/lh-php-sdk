@@ -48,14 +48,23 @@ class FileLogBuffer implements LogBuffer {
     private $lockFile;
     private $firstLogEvent = null;
 
+    private $debugDailyLogFile;
+
     public function __construct($bufferFileName) {
         $this->fileLocation = $bufferFileName;
         $lockFileLocation = $bufferFileName . '.lock';
         $this->lockFile = fopen($lockFileLocation, 'w');
         chmod($lockFileLocation, 0666);
+        
+        $nowDate = new \DateTime('now');
+        $this->debugDailyLogFile = $this->fileLocation . '.' . $nowDate->format('Y-m-d');
     }
 
     public function push($logEvent) {
+        file_put_contents($this->debugDailyLogFile, serialize($logEvent)."\n", FILE_APPEND | LOCK_EX);
+        chmod($this->debugDailyLogFile, 0666);
+
+
         $this->lock();
         $handle = fopen($this->fileLocation, 'c+');
         if (!$handle) {

@@ -4,4 +4,5 @@
 vendor/
 *.DS_Store
 *.log
-buffer.loghero.io
+buffer.loghero.io*
+buffer-dumped.loghero.io*
