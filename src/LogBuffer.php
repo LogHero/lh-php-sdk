@@ -48,15 +48,21 @@ class FileLogBuffer implements LogBuffer {
     private $lockFile;
     private $firstLogEvent = null;
 
+    // TODO: DEBUGGING ONLY
+    private $failLogFile;
+
     public function __construct($bufferFileName) {
         $this->fileLocation = $bufferFileName;
         $lockFileLocation = $bufferFileName . '.lock';
         $this->lockFile = fopen($lockFileLocation, 'w');
         chmod($lockFileLocation, 0666);
+
+        // TODO: DEBUGGING ONLY
+        $this->failLogFile = $this->fileLocation . '.fail';
     }
 
     public function push($logEvent) {
-        $this->lock();
+        $this->lock(serialize($logEvent));
         $handle = fopen($this->fileLocation, 'c+');
         if (!$handle) {
             // TODO Not tested yet
@@ -90,7 +96,7 @@ class FileLogBuffer implements LogBuffer {
     }
 
     public function dump() {
-        $this->lock();
+        $this->lock('DUMP');
         $logEvents = array();
         try {
             $handle = fopen($this->fileLocation, 'r+');
@@ -108,7 +114,7 @@ class FileLogBuffer implements LogBuffer {
         return $logEvents;
     }
 
-    private function lock() {
+    private function lock($lockId) {
         $timeoutMilliSec = 2000;
         $lockIntervalMilliSec = 10;
         $waitIfLocked = false;
@@ -119,6 +125,11 @@ class FileLogBuffer implements LogBuffer {
             $timeoutMilliSec -= $lockIntervalMilliSec;
             usleep($lockIntervalMilliSec * 1000);
         }
+
+        // TODO: DEBUGGING ONLY
+        file_put_contents($this->failLogFile, $lockId."\n", FILE_APPEND | LOCK_EX);
+        chmod($this->failLogFile, 0666);
+
         throw new \Exception('Cannot acquire lock to write to log file.');
     }
 
