@@ -1,7 +1,16 @@
 {
     "name": "loghero/sdk",
     "version": "0.2.0",
+    "type": "library",
+    "description": "The official PHP Client SDK for loghero.io",
     "homepage": "https://loghero.io/",
+    "license": "MIT",
+    "keywords": [
+        "logging",
+        "log analysis",
+        "bot tracking",
+        "SEO logs"
+    ],
     "authors": [
         {
             "name": "Kay Wolter",
@@ -9,6 +18,15 @@
             "role": "Developer"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/atript/lh-php-sdk"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/atript/lh-php-sdk/issues"
+    },
     "require-dev": {
         "phpunit/phpunit": "^5.7"
     },
