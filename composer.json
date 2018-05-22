@@ -18,15 +18,6 @@
             "role": "Developer"
         }
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/atript/lh-php-sdk"
-        }
-    ],
-    "support": {
-        "issues": "https://github.com/atript/lh-php-sdk/issues"
-    },
     "require-dev": {
         "phpunit/phpunit": "^5.7"
     },
