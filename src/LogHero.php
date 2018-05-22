@@ -17,7 +17,7 @@ class Client {
         $this->maxFlushTimeIntervalSeconds = $maxFlushTimeIntervalSeconds;
     }
 
-    public static function create($apiKey, $clientId, $logBuffer, $logEndpoint='https://development.loghero.io/logs/') {
+    public static function create($apiKey, $clientId, $logBuffer, $logEndpoint='https://api.loghero.io/logs/') {
         return new Client(new APIAccessCurl($apiKey, $clientId, $logEndpoint), $logBuffer);
     }
 
