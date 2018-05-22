@@ -2,7 +2,7 @@
     "name": "loghero/sdk",
     "version": "0.2.0",
     "type": "library",
-    "description": "The official PHP Client SDK for loghero.io",
+    "description": "The official PHP client SDK for loghero.io",
     "homepage": "https://loghero.io/",
     "license": "MIT",
     "keywords": [
