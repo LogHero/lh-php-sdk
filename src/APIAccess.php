@@ -19,6 +19,15 @@ abstract class APIAccessBase implements APIAccess {
         $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.2.0';
     }
 
+    public function submitLogPackage($payloadAsJson) {
+        if (empty($this->apiKey)) {
+            return;
+        }
+        $this->send($payloadAsJson);
+    }
+
+    abstract protected function send($payloadAsJson);
+
 }
 
 
@@ -53,7 +62,7 @@ class CurlClient {
 
 class APIAccessCurl extends APIAccessBase {
 
-    public function submitLogPackage($payloadAsJson) {
+    protected function send($payloadAsJson) {
         $curlClient = $this->createCurlClient($this->apiLogPackageEndpoint);
         $curlClient->setOpt(CURLOPT_HTTPHEADER, array(
             'Content-type: application/json',

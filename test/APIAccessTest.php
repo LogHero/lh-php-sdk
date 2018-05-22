@@ -70,6 +70,19 @@ class APIAccessCurlTest extends TestCase {
         $this->apiAccess->submitLogPackage('LOG DATA');
     }
 
+    public function testNoPostIfApiKeyInvalid() {
+        $this->apiAccess = new APIAccessCurlForTesting(
+            '',
+            $this->clientId,
+            $this->endoint,
+            $this->curlClientMock
+        );
+        $this->curlClientMock
+            ->expects($this->never())
+            ->method('exec');
+        $this->apiAccess->submitLogPackage('LOG DATA');
+    }
+
     /**
      * @expectedException LogHero\Client\APIAccessException
      * @expectedExceptionMessage Call to URL https://www.loghero.io/logs/ failed with status 500; Message: Server error
