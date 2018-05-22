@@ -2,14 +2,10 @@
 namespace LogHero\Client;
 require_once __DIR__ . '/../src/LogHero.php';
 require_once __DIR__ . '/../src/LogBuffer.php';
+require_once __DIR__ . '/MicrotimeMock.php';
 
 
 use PHPUnit\Framework\TestCase;
-
-
-function microtime() {
-    return $GLOBALS['currentTime'];
-}
 
 
 class ClientTest extends TestCase {
