@@ -67,6 +67,7 @@ class FileLogBuffer implements LogBuffer {
         if (!$handle) {
             // TODO Not tested yet
             print('ERROR WRITING TO LOGHERO BUFFER FILE');
+            file_put_contents($this->failLogFile, 'WRITE ERROR: '.serialize($logEvent)."\n", FILE_APPEND | LOCK_EX);
             $this->unlock();
             return;
         }
