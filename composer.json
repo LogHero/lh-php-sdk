@@ -1,7 +1,16 @@
 {
     "name": "loghero/sdk",
-    "version": "0.2.0",
+    "version": "0.2.2",
+    "type": "library",
+    "description": "The official PHP client SDK for loghero.io",
     "homepage": "https://loghero.io/",
+    "license": "MIT",
+    "keywords": [
+        "logging",
+        "log analysis",
+        "bot tracking",
+        "SEO logs"
+    ],
     "authors": [
         {
             "name": "Kay Wolter",
