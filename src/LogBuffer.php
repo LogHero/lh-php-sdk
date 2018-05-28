@@ -6,7 +6,6 @@ require_once __DIR__ . '/LogEvent.php';
 interface LogBuffer {
     public function push($logEvent);
     public function sizeInBytes();
-    public function getFirstLogEvent();
     public function dump();
 }
 
@@ -28,13 +27,6 @@ class MemLogBuffer implements LogBuffer {
         return count($this->logEvents) * $this->estimatedLogEventSizeInBytes;
     }
 
-    public function getFirstLogEvent() {
-        if (count($this->logEvents) == 0) {
-            return null;
-        }
-        return $this->logEvents[0];
-    }
-
     public function dump() {
         $dumpedLogEvents = $this->logEvents;
         $this->logEvents = array();
@@ -46,7 +38,7 @@ class MemLogBuffer implements LogBuffer {
 class FileLogBuffer implements LogBuffer {
     private $fileLocation;
     private $lockFile;
-    private $firstLogEvent = null;
+    private $currentLogEvent;
 
     public function __construct($bufferFileName) {
         $this->fileLocation = $bufferFileName;
@@ -56,55 +48,26 @@ class FileLogBuffer implements LogBuffer {
     }
 
     public function push($logEvent) {
-        $this->lock();
-        $handle = fopen($this->fileLocation, 'c+');
-        if (!$handle) {
-            // TODO Not tested yet
-            print('ERROR WRITING TO LOGHERO BUFFER FILE');
-            $this->unlock();
-            return;
-        }
-        $firstLogEventLine = fgets($handle);
-        if ($firstLogEventLine) {
-            $this->firstLogEvent = unserialize($firstLogEventLine);
-        }
-        else {
-            $this->firstLogEvent = $logEvent;
-        }
-        fseek($handle, 0, SEEK_END);
-        fwrite($handle, serialize($logEvent)."\n");
-        fclose($handle);
-        chmod($this->fileLocation, 0666);
-        $this->unlock();
+        file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND | LOCK_EX);
+        $this->currentLogEvent = $logEvent;
     }
 
     public function sizeInBytes() {
+        return 300000;
+
+
+        # TODO: Return actual size in bytes:
         if(!file_exists($this->fileLocation)) {
             return 0;
         }
         return filesize($this->fileLocation);
     }
 
-    public function getFirstLogEvent() {
-        return $this->firstLogEvent;
-    }
-
     public function dump() {
-        $this->lock();
+        #TODO Read from buffer file:
         $logEvents = array();
-        try {
-            $handle = fopen($this->fileLocation, 'r+');
-            if ($handle) {
-                while (($logEventLine = fgets($handle)) !== false) {
-                    array_push($logEvents, unserialize($logEventLine));
-                }
-                ftruncate($handle, 0);
-                fclose($handle);
-            }
-        }
-        catch(\Exception $e) {
-        }
-        $this->unlock();
+        assert($this->currentLogEvent);
+        array_push($logEvents, $this->currentLogEvent);
         return $logEvents;
     }
 

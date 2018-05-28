@@ -52,19 +52,19 @@ class ClientTest extends TestCase {
         }
     }
 
-    public function testSubmitLogEventsIfMaximumTimeIntervalIsReached() {
-        $this->apiAccessStub
-            ->expects($this->once())
-            ->method('submitLogPackage')
-            ->with($this->equalTo($this->buildExpectedPayload($this->createLogEventRows(3))));
-        $this->logHeroClient->submit($this->createLogEvent());
-        $timePassedSeconds = 120;
-        $GLOBALS['currentTime'] += $timePassedSeconds;
-        $this->logHeroClient->submit($this->createLogEvent());
-        $timePassedSeconds = 60;
-        $GLOBALS['currentTime'] += $timePassedSeconds;
-        $this->logHeroClient->submit($this->createLogEvent());
-    }
+//    public function testSubmitLogEventsIfMaximumTimeIntervalIsReached() {
+//        $this->apiAccessStub
+//            ->expects($this->once())
+//            ->method('submitLogPackage')
+//            ->with($this->equalTo($this->buildExpectedPayload($this->createLogEventRows(3))));
+//        $this->logHeroClient->submit($this->createLogEvent());
+//        $timePassedSeconds = 120;
+//        $GLOBALS['currentTime'] += $timePassedSeconds;
+//        $this->logHeroClient->submit($this->createLogEvent());
+//        $timePassedSeconds = 60;
+//        $GLOBALS['currentTime'] += $timePassedSeconds;
+//        $this->logHeroClient->submit($this->createLogEvent());
+//    }
 
     private function createLogEvent() {
         $logEvent = new LogEvent();

@@ -57,17 +57,17 @@ class Client {
         if ($this->logBuffer->sizeInBytes() >= $this->maxRecordSizeInBytes) {
             return true;
         }
-        $firstLogEvent = $this->logBuffer->getFirstLogEvent();
-        if (!$firstLogEvent) {
-            return false;
-        }
-        $currentUnixTimestamp = microtime(true);
-        $currentTimestamp = new \DateTime();
-        $currentTimestamp->setTimestamp($currentUnixTimestamp);
-        $currentTimeIntervalSeconds = $currentTimestamp->getTimestamp() - $firstLogEvent->getTimestamp()->getTimestamp();
-        if ($currentTimeIntervalSeconds >= $this->maxFlushTimeIntervalSeconds) {
-            return true;
-        }
+//        $firstLogEvent = $this->logBuffer->getFirstLogEvent();
+//        if (!$firstLogEvent) {
+//            return false;
+//        }
+//        $currentUnixTimestamp = microtime(true);
+//        $currentTimestamp = new \DateTime();
+//        $currentTimestamp->setTimestamp($currentUnixTimestamp);
+//        $currentTimeIntervalSeconds = $currentTimestamp->getTimestamp() - $firstLogEvent->getTimestamp()->getTimestamp();
+//        if ($currentTimeIntervalSeconds >= $this->maxFlushTimeIntervalSeconds) {
+//            return true;
+//        }
         return false;
     }
 
