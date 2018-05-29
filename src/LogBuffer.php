@@ -38,7 +38,6 @@ class MemLogBuffer implements LogBuffer {
 class FileLogBuffer implements LogBuffer {
     private $fileLocation;
     private $lockFile;
-    private $currentLogEvent;
 
     public function __construct($bufferFileName) {
         $this->fileLocation = $bufferFileName;
@@ -48,15 +47,11 @@ class FileLogBuffer implements LogBuffer {
     }
 
     public function push($logEvent) {
-        file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND | LOCK_EX);
-        $this->currentLogEvent = $logEvent;
+        $result = file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND | LOCK_EX);
+        chmod($this->fileLocation, 0666);
     }
 
     public function sizeInBytes() {
-        return 300000;
-
-
-        # TODO: Return actual size in bytes:
         if(!file_exists($this->fileLocation)) {
             return 0;
         }
@@ -64,10 +59,16 @@ class FileLogBuffer implements LogBuffer {
     }
 
     public function dump() {
-        #TODO Read from buffer file:
         $logEvents = array();
-        assert($this->currentLogEvent);
-        array_push($logEvents, $this->currentLogEvent);
+        $fp = fopen($this->fileLocation, "r+");
+        if (flock($fp, LOCK_EX)) {
+            while (($logEventLine = fgets($fp)) !== false) {
+                array_push($logEvents, unserialize($logEventLine));
+            }
+            ftruncate($fp, 0);
+            flock($fp, LOCK_UN);
+        }
+        fclose($fp);
         return $logEvents;
     }
 

@@ -10,7 +10,7 @@ class Client {
     private $maxRecordSizeInBytes;
     private $maxFlushTimeIntervalSeconds;
 
-    public function __construct($apiAccess, $logBuffer, $maxRecordSizeInBytes=30000, $maxFlushTimeIntervalSeconds=300) {
+    public function __construct($apiAccess, $logBuffer, $maxRecordSizeInBytes=4000, $maxFlushTimeIntervalSeconds=300) {
         $this->apiAccess = $apiAccess;
         $this->logBuffer = $logBuffer;
         $this->maxRecordSizeInBytes = $maxRecordSizeInBytes;
@@ -23,9 +23,9 @@ class Client {
 
     public function submit($logEvent) {
         $this->logBuffer->push($logEvent);
-        if ($this->needsFlush()) {
-            $this->flush();
-        }
+//        if ($this->needsFlush()) {
+//            $this->flush();
+//        }
     }
 
     public function flush() {
@@ -53,8 +53,9 @@ class Client {
         );
     }
 
-    private function needsFlush() {
-        if ($this->logBuffer->sizeInBytes() >= $this->maxRecordSizeInBytes) {
+    public function needsFlush() {
+        $sizeInBytes = $this->logBuffer->sizeInBytes();
+        if ($sizeInBytes >= $this->maxRecordSizeInBytes) {
             return true;
         }
 //        $firstLogEvent = $this->logBuffer->getFirstLogEvent();

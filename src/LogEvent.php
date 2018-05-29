@@ -42,6 +42,10 @@ class LogEvent {
         return $this;
     }
 
+    function getUserAgent() {
+        return $this->userAgent;
+    }
+
     function setReferer($referer) {
         $this->referer = $referer;
         return $this;
@@ -86,6 +90,7 @@ class LogEvent {
     }
 
     public function row() {
+        // TODO: Is this causing the missing logs? Losing batch because of inconsistent log events?
         $this->verify();
         return array(
             LogEvent::buildCidFromIPAndUserAgent($this->ipAddress, $this->userAgent),
