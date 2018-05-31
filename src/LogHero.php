@@ -41,9 +41,15 @@ class Client {
         $rows = array();
         $columns = NULL;
         foreach ($logEvents as $logEvent) {
-            array_push($rows, $logEvent->row());
-            if (is_null($columns)) {
-                $columns = $logEvent->columns();
+            try {
+                array_push($rows, $logEvent->row());
+                if (is_null($columns)) {
+                    $columns = $logEvent->columns();
+                }
+            }
+            // TODO: Test exception handling
+            catch (\Exception $e) {
+                //print($e);
             }
         }
         assert(is_null($columns) == false);
