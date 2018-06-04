@@ -16,6 +16,28 @@ function createLogEvent($landingPagePath) {
     return $logEvent;
 }
 
+function buildExpectedPayloadForLogEvents($logEvents) {
+    $rows = array();
+    foreach($logEvents as $logEvent) {
+        $rows[] = $logEvent->row();
+    }
+    return json_encode(array(
+        'columns' => [
+            'cid',
+            'hostname',
+            'landingPage',
+            'method',
+            'statusCode',
+            'timestamp',
+            'pageLoadTime',
+            'ip',
+            'ua',
+            'referer'
+        ],
+        'rows' => $rows
+    ));
+}
+    
 function assertLandingPagePathsInLogEvents($testCase, $logEvents, $landingPagePaths) {
     $testCase->assertEquals(count($logEvents), count($landingPagePaths));
     for ($i = 0; $i < count($logEvents); ++$i) {

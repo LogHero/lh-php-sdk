@@ -11,9 +11,14 @@ use PHPUnit\Framework\TestCase;
 
 class TestLogFlushStrategy implements LogFlushStrategy {
     public $logsReceived = array();
+    public $logBuffer;
 
-    public function flush(LogBuffer $logBuffer) {
-        $logs = $logBuffer->dump();
+    public function __construct(LogBuffer $logBuffer) {
+        $this->logBuffer = $logBuffer;
+    }
+
+    public function flush() {
+        $logs = $this->logBuffer->dump();
         $this->logsReceived = array_merge($this->logsReceived, $logs);
     }
 }
@@ -28,9 +33,10 @@ class ClientTest extends TestCase {
     public function setUp()
     {
         $GLOBALS['currentTime'] = 1523429300.8000;
-        $this->flushStrategy = new TestLogFlushStrategy();
+        $logBuffer = new MemLogBuffer(100);
+        $this->flushStrategy = new TestLogFlushStrategy($logBuffer);
         $this->logHeroClient = new Client(
-            new MemLogBuffer(100),
+            $logBuffer,
             $this->flushStrategy,
             $this->maxRecordSizeInBytes,
             $this->maxTimeIntervalSeconds
