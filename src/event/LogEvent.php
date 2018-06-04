@@ -17,55 +17,55 @@ class LogEvent {
     protected $hostname;
     protected $referer = null;
 
-    function setHostname($hostname) {
+    public function setHostname($hostname) {
         $this->hostname = $hostname;
         return $this;
     }
 
-    function setLandingPagePath($landingPagePath) {
+    public function setLandingPagePath($landingPagePath) {
         $this->landingPagePath = $landingPagePath;
         return $this;
     }
 
-    function setMethod($method) {
+    public function setMethod($method) {
         $this->method = $method;
         return $this;
     }
 
-    function setStatusCode($statusCode) {
+    public function setStatusCode($statusCode) {
         $this->statusCode = $statusCode;
         return $this;
     }
 
-    function setUserAgent($userAgent) {
+    public function setUserAgent($userAgent) {
         $this->userAgent = $userAgent;
         return $this;
     }
 
-    function getUserAgent() {
+    public function getUserAgent() {
         return $this->userAgent;
     }
 
-    function setReferer($referer) {
+    public function setReferer($referer) {
         $this->referer = $referer;
         return $this;
     }
 
-    function setIpAddress($ipAddress) {
+    public function setIpAddress($ipAddress) {
         $this->ipAddress = $ipAddress;
         return $this;
     }
 
-    function setTimestamp($timestamp) {
+    public function setTimestamp($timestamp) {
         $this->timestamp = $timestamp;
         return $this;
     }
 
-    function getTimestamp() {
+    public function getTimestamp() {
         return $this->timestamp;
     }
 
-    function setPageLoadTimeMilliSec($pageLoadTimeMilliSec) {
+    public function setPageLoadTimeMilliSec($pageLoadTimeMilliSec) {
         $this->pageLoadTimeMilliSec = $pageLoadTimeMilliSec;
         return $this;
     }
@@ -90,7 +90,6 @@ class LogEvent {
     }
 
     public function row() {
-        // TODO: Is this causing the missing logs? Losing batch because of inconsistent log events?
         $this->verify();
         return array(
             LogEvent::buildCidFromIPAndUserAgent($this->ipAddress, $this->userAgent),

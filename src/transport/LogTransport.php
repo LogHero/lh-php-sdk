@@ -11,7 +11,7 @@ class LogTransport implements LogTransportInterface {
     protected $logBuffer;
     protected $apiAccess;
 
-    public function __construct(LogBuffer $logBuffer, APIAccess $apiAccess) {
+    public function __construct(LogBufferInterface $logBuffer, APIAccessInterface $apiAccess) {
         $this->logBuffer = $logBuffer;
         $this->apiAccess = $apiAccess;
     }

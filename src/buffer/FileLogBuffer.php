@@ -1,41 +1,9 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/LogEvent.php';
+require_once __DIR__ . '/LogBuffer.php';
 
 
-interface LogBuffer {
-    public function push($logEvent);
-    public function needsDumping();
-    public function dump();
-}
-
-
-// TODO Is not thread safe yet
-class MemLogBuffer implements LogBuffer {
-    private $logEvents = array();
-    private $maxLogEvents;
-
-    public function __construct($maxLogEvents=10) {
-        $this->maxLogEvents = $maxLogEvents;
-    }
-
-    public function push($logEvent) {
-        array_push($this->logEvents, $logEvent);
-    }
-
-    public function needsDumping() {
-        return count($this->logEvents) >= $this->maxLogEvents;
-    }
-
-    public function dump() {
-        $dumpedLogEvents = $this->logEvents;
-        $this->logEvents = array();
-        return $dumpedLogEvents;
-    }
-
-}
-
-class FileLogBuffer implements LogBuffer {
+class FileLogBuffer implements LogBufferInterface {
     private $fileLocation;
     private $lockFile;
     private $maxBufferFileSizeInBytes;
@@ -49,7 +17,7 @@ class FileLogBuffer implements LogBuffer {
     }
 
     public function push($logEvent) {
-        $result = file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND | LOCK_EX);
+        file_put_contents($this->fileLocation, serialize($logEvent)."\n", FILE_APPEND | LOCK_EX);
         chmod($this->fileLocation, 0666);
     }
 
@@ -60,7 +28,7 @@ class FileLogBuffer implements LogBuffer {
     public function dump() {
         $logEvents = array();
         if (!file_exists($this->fileLocation)) {
-           return $logEvents;
+            return $logEvents;
         }
         $fp = fopen($this->fileLocation, 'r+');
         if (flock($fp, LOCK_EX)) {

@@ -1,6 +1,6 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../APIAccess.php';
+require_once __DIR__ . '/../http/APIAccess.php';
 require_once __DIR__ . '/LogTransport.php';
 
 
@@ -10,8 +10,8 @@ class AsyncLogTransport extends LogTransport {
     private $triggerEndpoint;
 
     public function __construct(
-        LogBuffer $logBuffer,
-        APIAccess $apiAccess,
+        LogBufferInterface $logBuffer,
+        APIAccessInterface $apiAccess,
         $clientId,
         $apiKey,
         $triggerEndpoint

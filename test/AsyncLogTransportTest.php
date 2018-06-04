@@ -1,6 +1,6 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../src/LogBuffer.php';
+require_once __DIR__ . '/../src/buffer/MemLogBuffer.php';
 require_once __DIR__ . '/../src/transport/AsyncLogTransport.php';
 require_once __DIR__ . '/Util.php';
 require_once __DIR__ . '/MicrotimeMock.php';
@@ -12,8 +12,8 @@ class AsyncLogTransportForTesting extends AsyncLogTransport {
     private $curlClientMock;
 
     public function __construct(
-        LogBuffer $logBuffer,
-        APIAccess $apiAccess,
+        LogBufferInterface $logBuffer,
+        APIAccessInterface $apiAccess,
         $clientId,
         $apiKey,
         $triggerEndpoint,

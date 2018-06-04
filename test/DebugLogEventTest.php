@@ -1,7 +1,7 @@
 <?php
 namespace LogHero\Client;
 
-require_once __DIR__ . '/../src/LogHeroDebug.php';
+require_once __DIR__ . '/../src/event/DebugLogEvent.php';
 
 use PHPUnit\Framework\TestCase;
 

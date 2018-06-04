@@ -1,6 +1,6 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../src/LogEventFactory.php';
+require_once __DIR__ . '/../src/event/LogEventFactory.php';
 require_once __DIR__ . '/MicrotimeMock.php';
 use PHPUnit\Framework\TestCase;
 
