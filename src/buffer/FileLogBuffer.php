@@ -33,7 +33,7 @@ class FileLogBuffer implements LogBufferInterface {
         $fp = fopen($this->fileLocation, 'r+');
         if (flock($fp, LOCK_EX)) {
             while (($logEventLine = fgets($fp)) !== false) {
-                array_push($logEvents, unserialize($logEventLine));
+                $logEvents[] = unserialize($logEventLine);
             }
             ftruncate($fp, 0);
             flock($fp, LOCK_UN);

@@ -13,7 +13,7 @@ class MemLogBuffer implements LogBufferInterface {
     }
 
     public function push($logEvent) {
-        array_push($this->logEvents, $logEvent);
+        $this->logEvents[] = $logEvent;
     }
 
     public function needsDumping() {

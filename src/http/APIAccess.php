@@ -16,6 +16,7 @@ interface APIAccessInterface {
 abstract class APIAccessBase implements APIAccessInterface {
     protected $apiKey;
     protected $apiLogPackageEndpoint;
+    protected $userAgent;
 
     public function __construct($apiKey, $clientId, $apiLogPackageEndpoint='https://api.loghero.io/logs/') {
         $this->apiKey = $apiKey;

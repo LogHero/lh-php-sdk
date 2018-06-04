@@ -42,7 +42,7 @@ class AsyncLogTransport extends LogTransport {
         if ( $status >= 300 ) {
             $errorMessage = $curlClient->error();
             $curlClient->close();
-            throw new \LogHero\Client\APIAccessException(
+            throw new APIAccessException(
                 'Call to URL '.$this->triggerEndpoint.' failed with status '.$status.'; Message: '.$errorMessage
             );
         }

@@ -16,7 +16,7 @@ function createLogEvent($landingPagePath) {
     return $logEvent;
 }
 
-function buildExpectedPayloadForLogEvents($logEvents) {
+function buildExpectedPayloadForLogEvents(array $logEvents) {
     $rows = array();
     foreach($logEvents as $logEvent) {
         $rows[] = $logEvent->row();
@@ -38,9 +38,9 @@ function buildExpectedPayloadForLogEvents($logEvents) {
     ));
 }
     
-function assertLandingPagePathsInLogEvents($testCase, $logEvents, $landingPagePaths) {
+function assertLandingPagePathsInLogEvents($testCase, array $logEvents, array $landingPagePaths) {
     $testCase->assertEquals(count($logEvents), count($landingPagePaths));
-    for ($i = 0; $i < count($logEvents); ++$i) {
+    for ($i = 0, $numLogEvents = count($logEvents); $i < $numLogEvents; ++$i) {
         $testCase->assertEquals($logEvents[$i]->row()[2], $landingPagePaths[$i]);
     }
 }
