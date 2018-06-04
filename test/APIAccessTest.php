@@ -22,7 +22,7 @@ class APIAccessCurlTest extends TestCase {
     private $curlClientMock;
     private $apiKey = 'LH-1234';
     private $clientId = 'Test Client';
-    private $endoint = 'https://www.loghero.io/logs/';
+    private $endpoint = 'https://www.loghero.io/logs/';
     private $apiAccess;
     private $expectedUserAgent;
 
@@ -31,7 +31,7 @@ class APIAccessCurlTest extends TestCase {
         $this->apiAccess = new APIAccessCurlForTesting(
             $this->apiKey,
             $this->clientId,
-            $this->endoint,
+            $this->endpoint,
             $this->curlClientMock
         );
         $composerPackage = file_get_contents(__DIR__.'/../composer.json');
@@ -74,7 +74,7 @@ class APIAccessCurlTest extends TestCase {
         $this->apiAccess = new APIAccessCurlForTesting(
             '',
             $this->clientId,
-            $this->endoint,
+            $this->endpoint,
             $this->curlClientMock
         );
         $this->curlClientMock
