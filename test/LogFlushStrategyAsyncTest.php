@@ -56,8 +56,6 @@ class LogFlushStrategyAsyncTest extends TestCase {
 
     public function testHitEndpointToTriggerAsyncFlush() {
         $this->logBuffer->push(createLogEvent('/page-1'));
-        $this->logBuffer->push(createLogEvent('/page-2'));
-        $this->logBuffer->push(createLogEvent('/page-3'));
         $this->apiAccessStub
             ->expects(static::never())
             ->method('submitLogPackage');
@@ -83,5 +81,20 @@ class LogFlushStrategyAsyncTest extends TestCase {
             ->expects($this->once())
             ->method('close');
         $this->flushStrategy->flush();
+    }
+
+    public function testDumpLogEventsToApi() {
+        $this->logBuffer->push(createLogEvent('/page-1'));
+        $this->logBuffer->push(createLogEvent('/page-2'));
+        $this->logBuffer->push(createLogEvent('/page-3'));
+        $this->apiAccessStub
+            ->expects($this->once())
+            ->method('submitLogPackage')
+            ->with($this->equalTo(buildExpectedPayloadForLogEvents(array(
+                createLogEvent('/page-1'),
+                createLogEvent('/page-2'),
+                createLogEvent('/page-3')
+            ))));
+        $this->flushStrategy->dumpLogEvents();
     }
 }

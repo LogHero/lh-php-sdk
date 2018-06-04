@@ -25,6 +25,10 @@ class LogFlushStrategyAsync extends LogFlushStrategyBase {
     public function flush() {
         $this->triggerAsyncFlush();
     }
+
+    public function dumpLogEvents() {
+        $this->dumpBufferAndSendLogsToApi();
+    }
     
     private function triggerAsyncFlush() {
         $curlClient = $this->createCurlClient($this->triggerEndpoint);
@@ -48,5 +52,4 @@ class LogFlushStrategyAsync extends LogFlushStrategyBase {
     protected function createCurlClient($url) {
         return new CurlClient($url);
     }
-
 }
