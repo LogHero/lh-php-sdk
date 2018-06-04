@@ -13,7 +13,7 @@ abstract class APIAccessBase implements APIAccess {
     protected $apiKey;
     protected $apiLogPackageEndpoint;
 
-    public function __construct($apiKey, $clientId, $apiLogPackageEndpoint) {
+    public function __construct($apiKey, $clientId, $apiLogPackageEndpoint='https://api.loghero.io/logs/') {
         $this->apiKey = $apiKey;
         $this->apiLogPackageEndpoint = $apiLogPackageEndpoint;
         $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.2.2';

@@ -16,8 +16,18 @@ class LogTransport implements LogTransportInterface {
         $this->apiAccess = $apiAccess;
     }
 
+    public function submit($logEvent) {
+        $this->logBuffer->push($logEvent);
+        if ($this->logBuffer->needsDumping()) {
+            $this->flush();
+        }
+    }
+
     public function flush() {
         $payload = $this->buildPayload($this->logBuffer->dump());
+        if ($payload['columns'] === null or count($payload['rows']) === 0) {
+            return;
+        }
         $this->send($payload);
     }
 
@@ -26,15 +36,14 @@ class LogTransport implements LogTransportInterface {
         $columns = null;
         foreach ($logEvents as $logEvent) {
             try {
-                $rows[] = $logEvent->row();
                 if ($columns === null) {
                     $columns = $logEvent->columns();
                 }
+                $rows[] = $logEvent->row();
             }
             catch (\Exception $e) {
             }
         }
-        assert($columns !== null);
         return array(
             'columns' => $columns,
             'rows' => $rows

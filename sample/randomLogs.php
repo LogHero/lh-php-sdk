@@ -2,6 +2,8 @@
 <?php
 require_once __DIR__ . '/../src/LogHeroDebug.php';
 require_once __DIR__ . '/../src/LogBuffer.php';
+require_once __DIR__ . '/../src/APIAccess.php';
+require_once __DIR__ . '/../src/transport/LogTransport.php';
 
 
 date_default_timezone_set('Europe/Berlin');
@@ -54,10 +56,12 @@ $logStringArray = array(
 );
 
 
-$logHero = \LogHero\Client\Client::create('YOUR_API_KEY', 'YOUR CLIENT ID', new \LogHero\Client\FileLogBuffer(__DIR__ . '/buffer.loghero.io'));
+$logBuffer = new \LogHero\Client\FileLogBuffer(__DIR__ . '/buffer.loghero.io');
+$apiAccess = new \LogHero\Client\APIAccessCurl('YOUR_API_KEY', 'YOUR CLIENT ID');
+$logTransport = new \LogHero\Client\LogTransport($logBuffer, $apiAccess);
 foreach ($logStringArray as $logString) {
     print('Submitting '.$logString."\n");
     $lhLogEvent = createLogEvent($logString);
-    $logHero->submit($lhLogEvent);
+    $logTransport->submit($lhLogEvent);
 }
-$logHero->flush();
+$logTransport->flush();

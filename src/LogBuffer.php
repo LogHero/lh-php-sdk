@@ -40,7 +40,7 @@ class FileLogBuffer implements LogBuffer {
     private $lockFile;
     private $maxBufferFileSizeInBytes;
 
-    public function __construct($bufferFileName, $maxBufferFileSizeInBytes) {
+    public function __construct($bufferFileName, $maxBufferFileSizeInBytes=15000) {
         $this->fileLocation = $bufferFileName;
         $lockFileLocation = $bufferFileName . '.lock';
         $this->lockFile = fopen($lockFileLocation, 'w');

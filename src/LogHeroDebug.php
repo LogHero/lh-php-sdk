@@ -1,6 +1,6 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/LogHero.php';
+require_once __DIR__ . '/LogEvent.php';
 
 class DebugLogEvent extends LogEvent  {
 
