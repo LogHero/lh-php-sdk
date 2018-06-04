@@ -1,14 +1,14 @@
 <?php
 namespace LogHero\Client;
 require_once __DIR__ . '/../src/LogBuffer.php';
-require_once __DIR__ . '/../src/LogFlushStrategySync.php';
+require_once __DIR__ . '/../src/transport/LogTransport.php';
 require_once __DIR__ . '/Util.php';
 require_once __DIR__ . '/MicrotimeMock.php';
 
 use PHPUnit\Framework\TestCase;
 
 
-class LogFlushStrategySyncTest extends TestCase {
+class LogTransportTest extends TestCase {
     private $logBuffer;
     private $flushStrategy;
     private $apiAccessStub;
@@ -17,7 +17,7 @@ class LogFlushStrategySyncTest extends TestCase {
         $GLOBALS['currentTime'] = 1523429300.8000;
         $this->logBuffer = new MemLogBuffer();
         $this->apiAccessStub = $this->createMock(APIAccess::class);
-        $this->flushStrategy = new LogFlushStrategySync($this->logBuffer, $this->apiAccessStub);
+        $this->flushStrategy = new LogTransport($this->logBuffer, $this->apiAccessStub);
     }
 
     public function testDumpLogBufferAndSendLogEventsToApi() {
@@ -50,5 +50,4 @@ class LogFlushStrategySyncTest extends TestCase {
             ))));
         $this->flushStrategy->flush();
     }
-
 }

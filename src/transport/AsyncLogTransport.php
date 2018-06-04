@@ -1,10 +1,10 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/APIAccess.php';
-require_once __DIR__ . '/LogFlushStrategy.php';
+require_once __DIR__ . '/../APIAccess.php';
+require_once __DIR__ . '/LogTransport.php';
 
 
-class LogFlushStrategyAsync extends LogFlushStrategyBase {
+class AsyncLogTransport extends LogTransport {
     private $clientId;
     private $apiKey;
     private $triggerEndpoint;
@@ -27,9 +27,9 @@ class LogFlushStrategyAsync extends LogFlushStrategyBase {
     }
 
     public function dumpLogEvents() {
-        $this->dumpBufferAndSendLogsToApi();
+        parent::flush();
     }
-    
+
     private function triggerAsyncFlush() {
         $curlClient = $this->createCurlClient($this->triggerEndpoint);
         $curlClient->setOpt(CURLOPT_HTTPHEADER, array(

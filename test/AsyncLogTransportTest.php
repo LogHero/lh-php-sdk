@@ -1,14 +1,14 @@
 <?php
 namespace LogHero\Client;
 require_once __DIR__ . '/../src/LogBuffer.php';
-require_once __DIR__ . '/../src/LogFlushStrategyAsync.php';
+require_once __DIR__ . '/../src/transport/AsyncLogTransport.php';
 require_once __DIR__ . '/Util.php';
 require_once __DIR__ . '/MicrotimeMock.php';
 
 use PHPUnit\Framework\TestCase;
 
 
-class LogFlushStrategyAsyncForTesting extends LogFlushStrategyAsync {
+class AsyncLogTransportForTesting extends AsyncLogTransport {
     private $curlClientMock;
 
     public function __construct(
@@ -29,7 +29,7 @@ class LogFlushStrategyAsyncForTesting extends LogFlushStrategyAsync {
 }
 
 
-class LogFlushStrategyAsyncTest extends TestCase {
+class AsyncLogTransportTest extends TestCase {
     private $logBuffer;
     private $flushStrategy;
     private $apiAccessStub;
@@ -44,7 +44,7 @@ class LogFlushStrategyAsyncTest extends TestCase {
         $triggerEndpoint = '/flush.php';
         $apiKey = 'LH-1234';
         $this->curlClientMock = $this->createMock(CurlClient::class);
-        $this->flushStrategy = new LogFlushStrategyAsyncForTesting(
+        $this->flushStrategy = new AsyncLogTransportForTesting(
             $this->logBuffer,
             $this->apiAccessStub,
             $this->clientId,
