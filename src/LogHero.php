@@ -34,31 +34,6 @@ class Client {
             return;
         }
         $this->flushStrategy->flush($this->logBuffer);
-        // TODO Move to flush strategy
-        //$payload = $this->buildPayload($this->logBuffer->dump());
-        //$this->send($payload);
-    }
-
-    private function buildPayload($logEvents) {
-        $rows = array();
-        $columns = NULL;
-        foreach ($logEvents as $logEvent) {
-            try {
-                array_push($rows, $logEvent->row());
-                if (is_null($columns)) {
-                    $columns = $logEvent->columns();
-                }
-            }
-            // TODO: Test exception handling
-            catch (\Exception $e) {
-                //print($e);
-            }
-        }
-        assert(is_null($columns) == false);
-        return array(
-            'columns' => $columns,
-            'rows' => $rows
-        );
     }
 
     public function needsFlush() {
@@ -78,10 +53,6 @@ class Client {
 //            return true;
 //        }
         return false;
-    }
-
-    private function send($payload) {
-        $this->apiAccess->submitLogPackage(json_encode($payload));
     }
 
 }
