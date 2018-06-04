@@ -60,7 +60,10 @@ class FileLogBuffer implements LogBuffer {
 
     public function dump() {
         $logEvents = array();
-        $fp = fopen($this->fileLocation, "r+");
+        if (!file_exists($this->fileLocation)) {
+           return $logEvents;
+        }
+        $fp = fopen($this->fileLocation, 'r+');
         if (flock($fp, LOCK_EX)) {
             while (($logEventLine = fgets($fp)) !== false) {
                 array_push($logEvents, unserialize($logEventLine));

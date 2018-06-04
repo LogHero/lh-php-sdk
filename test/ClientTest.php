@@ -2,14 +2,25 @@
 namespace LogHero\Client;
 require_once __DIR__ . '/../src/LogHero.php';
 require_once __DIR__ . '/../src/LogBuffer.php';
+require_once __DIR__ . '/../src/LogFlushStrategy.php';
 require_once __DIR__ . '/MicrotimeMock.php';
 
 
 use PHPUnit\Framework\TestCase;
 
 
+class TestLogFlushStrategy implements LogFlushStrategy {
+    public $logsReceived = array();
+
+    public function flush(LogBuffer $logBuffer) {
+        $logs = $logBuffer->dump();
+        $this->logsReceived = array_merge($this->logsReceived, $logs);
+    }
+}
+
+
 class ClientTest extends TestCase {
-    private $apiAccessStub;
+    private $flushStrategy;
     private $logHeroClient;
     private $maxRecordSizeInBytes = 500;
     private $maxTimeIntervalSeconds = 150;
@@ -17,39 +28,38 @@ class ClientTest extends TestCase {
     public function setUp()
     {
         $GLOBALS['currentTime'] = 1523429300.8000;
-        $this->apiAccessStub = $this->createMock(APIAccess::class);
+        $this->flushStrategy = new TestLogFlushStrategy();
         $this->logHeroClient = new Client(
-            $this->apiAccessStub,
             new MemLogBuffer(100),
+            $this->flushStrategy,
             $this->maxRecordSizeInBytes,
             $this->maxTimeIntervalSeconds
         );
     }
 
     public function testSubmitNothingIfNoLogsRecorded() {
-        $this->apiAccessStub
-            ->expects($this->never())
-            ->method('submitLogPackage');
         $this->logHeroClient->flush();
+        static::assertCount(0, $this->flushStrategy->logsReceived);
     }
 
     public function testSubmitLogEventToApi() {
-        $this->apiAccessStub
-            ->expects($this->once())
-            ->method('submitLogPackage')
-            ->with($this->equalTo($this->buildExpectedPayload($this->createLogEventRows(1))));
         $this->logHeroClient->submit($this->createLogEvent());
+        static::assertCount(0, $this->flushStrategy->logsReceived);
         $this->logHeroClient->flush();
+        static::assertCount(1, $this->flushStrategy->logsReceived);
     }
 
     public function testSubmitLogEventsIfRecordSizeIsReached() {
-        $this->apiAccessStub
-            ->expects($this->exactly(2))
-            ->method('submitLogPackage')
-            ->with($this->equalTo($this->buildExpectedPayload($this->createLogEventRows(5))));
-        for ($x = 0; $x < 11; ++$x) {
+        for ($x = 0; $x < 4; ++$x) {
             $this->logHeroClient->submit($this->createLogEvent());
         }
+        static::assertCount(0, $this->flushStrategy->logsReceived);
+        $this->logHeroClient->submit($this->createLogEvent());
+        static::assertCount(5, $this->flushStrategy->logsReceived);
+        for ($x = 0; $x < 5; ++$x) {
+            $this->logHeroClient->submit($this->createLogEvent());
+        }
+        static::assertCount(10, $this->flushStrategy->logsReceived);
     }
 
 //    public function testSubmitLogEventsIfMaximumTimeIntervalIsReached() {

@@ -1,5 +1,6 @@
 <?php
 namespace LogHero\Client;
+require_once __DIR__ . '/LogEvent.php';
 
 
 class LogEventFactory {
