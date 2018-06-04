@@ -33,7 +33,7 @@ class ClientTest extends TestCase {
     public function setUp()
     {
         $GLOBALS['currentTime'] = 1523429300.8000;
-        $logBuffer = new MemLogBuffer(100);
+        $logBuffer = new MemLogBuffer(5);
         $this->flushStrategy = new TestLogFlushStrategy($logBuffer);
         $this->logHeroClient = new Client(
             $logBuffer,

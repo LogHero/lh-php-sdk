@@ -24,36 +24,13 @@ class Client {
 
     public function submit($logEvent) {
         $this->logBuffer->push($logEvent);
-        if ($this->needsFlush()) {
+        if ($this->logBuffer->needsDumping()) {
             $this->flush();
         }
     }
 
     public function flush() {
-        if ($this->logBuffer->sizeInBytes() === 0) {
-            return;
-        }
-        $this->flushStrategy->flush($this->logBuffer);
+        $this->flushStrategy->flush();
     }
-
-    public function needsFlush() {
-        $sizeInBytes = $this->logBuffer->sizeInBytes();
-        if ($sizeInBytes >= $this->maxRecordSizeInBytes) {
-            return true;
-        }
-//        $firstLogEvent = $this->logBuffer->getFirstLogEvent();
-//        if (!$firstLogEvent) {
-//            return false;
-//        }
-//        $currentUnixTimestamp = microtime(true);
-//        $currentTimestamp = new \DateTime();
-//        $currentTimestamp->setTimestamp($currentUnixTimestamp);
-//        $currentTimeIntervalSeconds = $currentTimestamp->getTimestamp() - $firstLogEvent->getTimestamp()->getTimestamp();
-//        if ($currentTimeIntervalSeconds >= $this->maxFlushTimeIntervalSeconds) {
-//            return true;
-//        }
-        return false;
-    }
-
 }
 

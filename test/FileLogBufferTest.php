@@ -22,8 +22,8 @@ class LogEventWorkerThread extends \GPhpThread {
     {
         parent::__construct($sharedCriticalSection, false);
         $this->numberOfLogEventsToWrite = $numberOfLogEventsToWrite;
-        $this->logBuffer = new FileLogBuffer($bufferFileLocation);
-        $this->resultBuffer = new FileLogBuffer($dumpedLogEventsResultFile);
+        $this->logBuffer = new FileLogBuffer($bufferFileLocation, 1000);
+        $this->resultBuffer = new FileLogBuffer($dumpedLogEventsResultFile, 1000);
     }
 
     public function run() {
@@ -46,7 +46,8 @@ class FileLogBufferTest extends TestCase {
 
     public function setUp() {
         parent::setUp();
-        $this->logBuffer = new FileLogBuffer($this->bufferFileLocation);
+        $maxBufferFileSizeInBytes = 1000;
+        $this->logBuffer = new FileLogBuffer($this->bufferFileLocation, $maxBufferFileSizeInBytes);
     }
 
     public function tearDown() {
@@ -65,15 +66,15 @@ class FileLogBufferTest extends TestCase {
         $this->assertFileExists($this->bufferFileLocation);
     }
 
-    public function testGetSizeInBytes() {
-        $this->assertEquals(0, $this->logBuffer->sizeInBytes());
+    public function testNeedsDumping() {
+        static::assertFalse($this->logBuffer->needsDumping());
         $this->logBuffer->push(createLogEvent('/page-1'));
         clearstatcache();
-        $this->assertEquals(431, $this->logBuffer->sizeInBytes());
+        static::assertFalse($this->logBuffer->needsDumping());
         $this->logBuffer->push(createLogEvent('/page-2'));
         $this->logBuffer->push(createLogEvent('/page-3'));
         clearstatcache();
-        $this->assertEquals(1293, $this->logBuffer->sizeInBytes());
+        static::assertTrue($this->logBuffer->needsDumping());
     }
 
     public function testDeleteBufferFileOnDump() {
@@ -83,7 +84,6 @@ class FileLogBufferTest extends TestCase {
         $this->logBuffer->push(createLogEvent('/page-2'));
         $this->logBuffer->push(createLogEvent('/page-3'));
         clearstatcache();
-        $this->assertEquals(1293, $this->logBuffer->sizeInBytes());
         $logEvents = $this->logBuffer->dump();
         assertLandingPagePathsInLogEvents($this, $logEvents, array(
             '/page-1',
@@ -91,7 +91,6 @@ class FileLogBufferTest extends TestCase {
             '/page-3'
         ));
         clearstatcache();
-        $this->assertEquals(0, $this->logBuffer->sizeInBytes());
         $this->logBuffer->push(createLogEvent('/page-4'));
         $this->logBuffer->push(createLogEvent('/page-5'));
         $logEvents = $this->logBuffer->dump();
@@ -129,7 +128,7 @@ class FileLogBufferTest extends TestCase {
         foreach($threads as $workerThread) {
             $workerThread->join();
         }
-        $resultBuffer = new FileLogBuffer($this->dumpedLogEventsResultFile);
+        $resultBuffer = new FileLogBuffer($this->dumpedLogEventsResultFile, 1000);
         $logEvents = $resultBuffer->dump();
         $this->assertEquals($numberOfThreads * $logEventsPerThread, count($logEvents));
     }

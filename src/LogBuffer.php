@@ -5,7 +5,7 @@ require_once __DIR__ . '/LogEvent.php';
 
 interface LogBuffer {
     public function push($logEvent);
-    public function sizeInBytes();
+    public function needsDumping();
     public function dump();
 }
 
@@ -13,18 +13,18 @@ interface LogBuffer {
 // TODO Is not thread safe yet
 class MemLogBuffer implements LogBuffer {
     private $logEvents = array();
-    private $estimatedLogEventSizeInBytes;
+    private $maxLogEvents;
 
-    public function __construct($estimatedLogEventSizeInBytes=150) {
-        $this->estimatedLogEventSizeInBytes = $estimatedLogEventSizeInBytes;
+    public function __construct($maxLogEvents=10) {
+        $this->maxLogEvents = $maxLogEvents;
     }
 
     public function push($logEvent) {
         array_push($this->logEvents, $logEvent);
     }
 
-    public function sizeInBytes() {
-        return count($this->logEvents) * $this->estimatedLogEventSizeInBytes;
+    public function needsDumping() {
+        return count($this->logEvents) >= $this->maxLogEvents;
     }
 
     public function dump() {
@@ -38,12 +38,14 @@ class MemLogBuffer implements LogBuffer {
 class FileLogBuffer implements LogBuffer {
     private $fileLocation;
     private $lockFile;
+    private $maxBufferFileSizeInBytes;
 
-    public function __construct($bufferFileName) {
+    public function __construct($bufferFileName, $maxBufferFileSizeInBytes) {
         $this->fileLocation = $bufferFileName;
         $lockFileLocation = $bufferFileName . '.lock';
         $this->lockFile = fopen($lockFileLocation, 'w');
         chmod($lockFileLocation, 0666);
+        $this->maxBufferFileSizeInBytes = $maxBufferFileSizeInBytes;
     }
 
     public function push($logEvent) {
@@ -51,11 +53,8 @@ class FileLogBuffer implements LogBuffer {
         chmod($this->fileLocation, 0666);
     }
 
-    public function sizeInBytes() {
-        if(!file_exists($this->fileLocation)) {
-            return 0;
-        }
-        return filesize($this->fileLocation);
+    public function needsDumping() {
+        return $this->sizeInBytes() >= $this->maxBufferFileSizeInBytes;
     }
 
     public function dump() {
@@ -75,22 +74,10 @@ class FileLogBuffer implements LogBuffer {
         return $logEvents;
     }
 
-    private function lock() {
-        $timeoutMilliSec = 2000;
-        $lockIntervalMilliSec = 10;
-        $waitIfLocked = false;
-        while($timeoutMilliSec > 0) {
-            if(flock($this->lockFile, LOCK_EX | LOCK_NB, $waitIfLocked)) {
-                return;
-            }
-            $timeoutMilliSec -= $lockIntervalMilliSec;
-            usleep($lockIntervalMilliSec * 1000);
+    private function sizeInBytes() {
+        if(!file_exists($this->fileLocation)) {
+            return 0;
         }
-        throw new \Exception('Cannot acquire lock to write to log file.');
+        return filesize($this->fileLocation);
     }
-
-    private function unlock() {
-        flock($this->lockFile, LOCK_UN);
-    }
-
 }
