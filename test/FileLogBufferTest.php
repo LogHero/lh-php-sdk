@@ -111,7 +111,7 @@ class FileLogBufferTest extends TestCase {
         ));
     }
     
-    public function testSetTimestampOfLastDump() {
+    public function testAcquireDumpIfMaxTimeIntervalIsReached() {
         static::assertFalse($this->logBuffer->needsDumping());
         $this->logBuffer->push(createLogEvent('/page-1'));
         $this->logBuffer->push(createLogEvent('/page-2'));
