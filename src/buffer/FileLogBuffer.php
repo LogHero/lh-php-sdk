@@ -9,7 +9,7 @@ class FileLogBuffer implements LogBufferInterface {
     private $maxBufferFileSizeInBytes;
     private $maxDumpTimeIntervalSeconds;
 
-    public function __construct($bufferFileName, $maxBufferFileSizeInBytes=100000, $maxDumpTimeIntervalSeconds=5*60) {
+    public function __construct($bufferFileName, $maxBufferFileSizeInBytes=100000, $maxDumpTimeIntervalSeconds=300) {
         $this->fileLocation = $bufferFileName;
         $this->maxDumpTimeIntervalSeconds = $maxDumpTimeIntervalSeconds;
         $this->lastDumpTimestampFileLocation = str_replace('.txt', '', $bufferFileName) . '.last-dump.timestamp';
