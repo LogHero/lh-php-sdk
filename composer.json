@@ -26,9 +26,14 @@
     "require": {
     },
     "autoload": {
-        "classmap": ["src/"]
+        "classmap": [
+            "src/"
+        ]
     },
     "autoload-dev": {
-        "files": ["test/Util.php", "test/MicrotimeMock.php"]
+        "files": [
+            "test/Util.php",
+            "test/MicrotimeMock.php"
+        ]
     }
 }
