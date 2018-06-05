@@ -15,11 +15,11 @@ class AsyncLogTransportForTesting extends AsyncLogTransport {
         LogBufferInterface $logBuffer,
         APIAccessInterface $apiAccess,
         $clientId,
-        $apiKey,
+        $secret,
         $triggerEndpoint,
         $curlClientMock
     ) {
-        parent::__construct($logBuffer, $apiAccess, $clientId, $apiKey, $triggerEndpoint);
+        parent::__construct($logBuffer, $apiAccess, $clientId, $secret, $triggerEndpoint);
         $this->curlClientMock = $curlClientMock;
     }
 
@@ -42,13 +42,13 @@ class AsyncLogTransportTest extends TestCase {
         $this->apiAccessStub = $this->createMock(APIAccess::class);
         $this->clientId = 'test-client';
         $triggerEndpoint = '/flush.php';
-        $apiKey = 'LH-1234';
+        $secret = 'LH-1234';
         $this->curlClientMock = $this->createMock(CurlClient::class);
         $this->flushStrategy = new AsyncLogTransportForTesting(
             $this->logBuffer,
             $this->apiAccessStub,
             $this->clientId,
-            $apiKey,
+            $secret,
             $triggerEndpoint,
             $this->curlClientMock
         );

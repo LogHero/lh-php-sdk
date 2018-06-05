@@ -13,12 +13,12 @@ class AsyncLogTransport extends LogTransport {
         LogBufferInterface $logBuffer,
         APIAccessInterface $apiAccess,
         $clientId,
-        $apiKey,
+        $secret,
         $triggerEndpoint
     ) {
         parent::__construct($logBuffer, $apiAccess);
         $this->clientId = $clientId;
-        $this->apiKey = $apiKey;
+        $this->secret = $secret;
         $this->triggerEndpoint = $triggerEndpoint;
     }
 
@@ -33,7 +33,7 @@ class AsyncLogTransport extends LogTransport {
     private function triggerAsyncFlush() {
         $curlClient = $this->createCurlClient($this->triggerEndpoint);
         $curlClient->setOpt(CURLOPT_HTTPHEADER, array(
-            'Authorization: '.$this->apiKey,
+            'Authorization: '.$this->secret,
             'User-Agent: '.$this->clientId
         ));
         $curlClient->setOpt(CURLOPT_CUSTOMREQUEST, 'GET');
