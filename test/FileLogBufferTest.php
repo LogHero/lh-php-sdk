@@ -100,15 +100,6 @@ class FileLogBufferTest extends TestCase {
         ));
     }
 
-//    public function testGetFirstLogEvent() {
-//        $this->assertNull($this->logBuffer->getFirstLogEvent());
-//        $this->logBuffer->push(createLogEvent('/page-1'));
-//        $this->assertEquals($this->logBuffer->getFirstLogEvent()->row()[2], '/page-1');
-//        $this->logBuffer->push(createLogEvent('/page-2'));
-//        $this->logBuffer->push(createLogEvent('/page-3'));
-//        $this->assertEquals($this->logBuffer->getFirstLogEvent()->row()[2], '/page-1');
-//    }
-
     public function testHandlesConcurrentAccess() {
         $this->assertFileNotExists($this->dumpedLogEventsResultFile);
         $criticalSection = null;
