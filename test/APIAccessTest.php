@@ -1,9 +1,8 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../src/http/APIAccess.php';
-require_once __DIR__ . '/../src/http/CurlClient.php';
 
 use PHPUnit\Framework\TestCase;
+
 
 class APIAccessForTesting extends APIAccess {
     private $curlClientMock;

@@ -1,8 +1,8 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../src/event/LogEvent.php';
 
 use PHPUnit\Framework\TestCase;
+
 
 class LogEventTest extends TestCase {
     private $refererColumnIdx = 9;

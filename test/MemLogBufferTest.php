@@ -1,9 +1,5 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../src/buffer/LogBuffer.php';
-require_once __DIR__ . '/../src/event/LogEvent.php';
-require_once __DIR__ . '/Util.php';
-
 
 use PHPUnit\Framework\TestCase;
 

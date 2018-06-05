@@ -24,5 +24,11 @@
         "php-mock/php-mock": "^2.0"
     },
     "require": {
+    },
+    "autoload": {
+        "classmap": ["src/"]
+    },
+    "autoload-dev": {
+        "files": ["test/Util.php", "test/MicrotimeMock.php"]
     }
 }

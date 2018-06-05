@@ -1,6 +1,5 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/LogBuffer.php';
 
 
 class FileLogBuffer implements LogBufferInterface {

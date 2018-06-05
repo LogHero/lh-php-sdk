@@ -1,9 +1,10 @@
 <?php
 namespace LogHero\Client;
+
 use phpmock\MockBuilder;
 
 
-function createMicrotimeMock($namespace) {
+function createMicrotimeMock($namespace='\\LogHero\\Client') {
     $builder = new MockBuilder();
     $builder->setNamespace($namespace)
         ->setName('microtime')

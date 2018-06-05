@@ -1,10 +1,5 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../src/buffer/FileLogBuffer.php';
-require_once __DIR__ . '/../src/event/LogEvent.php';
-require_once __DIR__ . '/Util.php';
-require_once __DIR__ . '/MicrotimeMock.php';
-
 
 use PHPUnit\Framework\TestCase;
 
@@ -51,7 +46,7 @@ class FileLogBufferTest extends TestCase {
     public function setUp() {
         parent::setUp();
         $GLOBALS['currentTime'] = \microtime(true);
-        $this->microtimeMock = createMicrotimeMock('LogHero\\Client');
+        $this->microtimeMock = createMicrotimeMock();
         $this->microtimeMock->enable();
         $maxBufferFileSizeInBytes = 1000;
         $this->logBuffer = new FileLogBuffer($this->bufferFileLocation, $maxBufferFileSizeInBytes);

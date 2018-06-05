@@ -1,7 +1,5 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../src/event/LogEventFactory.php';
-require_once __DIR__ . '/MicrotimeMock.php';
 
 use PHPUnit\Framework\TestCase;
 
@@ -13,8 +11,8 @@ class LogEventFactoryTest extends TestCase {
     public function setUp() {
         parent::setUp();
         $GLOBALS['currentTime'] = 1523429300.8000;
-        $this->logEventFactory = new Event\LogEventFactory();
-        $this->microtimeMock = createMicrotimeMock('LogHero\\Client\\Event');
+        $this->logEventFactory = new LogEventFactory();
+        $this->microtimeMock = createMicrotimeMock();
         $this->microtimeMock->enable();
     }
 
@@ -57,8 +55,7 @@ class LogEventFactoryTest extends TestCase {
             'https://www.loghero.io'
         ]);
     }
-
-
+    
     private function setupServerGlobal($pageUrl) {
         $_SERVER['REQUEST_URI'] = $pageUrl;
         $_SERVER['REQUEST_METHOD'] = 'POST';
@@ -69,5 +66,4 @@ class LogEventFactoryTest extends TestCase {
         $_SERVER['HTTP_HOST'] = 'example.org';
         http_response_code(301);
     }
-
 }
