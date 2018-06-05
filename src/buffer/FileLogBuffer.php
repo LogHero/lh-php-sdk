@@ -5,14 +5,14 @@ require_once __DIR__ . '/LogBuffer.php';
 
 class FileLogBuffer implements LogBufferInterface {
     private $fileLocation;
-    private $lockFile;
+    private $lastDumpTimestampFileLocation;
     private $maxBufferFileSizeInBytes;
+    private $maxDumpTimeIntervalSeconds;
 
-    public function __construct($bufferFileName, $maxBufferFileSizeInBytes=15000) {
+    public function __construct($bufferFileName, $maxBufferFileSizeInBytes=15000, $maxDumpTimeIntervalSeconds=5*60) {
         $this->fileLocation = $bufferFileName;
-        $lockFileLocation = $bufferFileName . '.lock';
-        $this->lockFile = fopen($lockFileLocation, 'w');
-        chmod($lockFileLocation, 0666);
+        $this->maxDumpTimeIntervalSeconds = $maxDumpTimeIntervalSeconds;
+        $this->lastDumpTimestampFileLocation = str_replace('.txt', '', $bufferFileName) . '.last-dump.timestamp';
         $this->maxBufferFileSizeInBytes = $maxBufferFileSizeInBytes;
     }
 
@@ -22,7 +22,16 @@ class FileLogBuffer implements LogBufferInterface {
     }
 
     public function needsDumping() {
-        return $this->sizeInBytes() >= $this->maxBufferFileSizeInBytes;
+        if ($this->sizeInBytes() >= $this->maxBufferFileSizeInBytes) {
+            return true;
+        }
+        if (file_exists($this->lastDumpTimestampFileLocation)) {
+            $lastDumpTimestamp = filemtime ($this->lastDumpTimestampFileLocation);
+            $currentTimestamp = microtime(true);
+            $nextDumpTimestamp = $lastDumpTimestamp + $this->maxDumpTimeIntervalSeconds;
+            return $currentTimestamp >= $nextDumpTimestamp;
+        }
+        return false;
     }
 
     public function dump() {
@@ -32,6 +41,8 @@ class FileLogBuffer implements LogBufferInterface {
         }
         $fp = fopen($this->fileLocation, 'r+');
         if (flock($fp, LOCK_EX)) {
+            file_put_contents ($this->lastDumpTimestampFileLocation, 'loghero.io');
+            chmod($this->lastDumpTimestampFileLocation, 0666);
             while (($logEventLine = fgets($fp)) !== false) {
                 $logEvents[] = unserialize($logEventLine);
             }

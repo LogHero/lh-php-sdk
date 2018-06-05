@@ -3,6 +3,7 @@ namespace LogHero\Client;
 require_once __DIR__ . '/../src/buffer/FileLogBuffer.php';
 require_once __DIR__ . '/../src/event/LogEvent.php';
 require_once __DIR__ . '/Util.php';
+require_once __DIR__ . '/MicrotimeMock.php';
 
 
 use PHPUnit\Framework\TestCase;
@@ -40,7 +41,9 @@ class LogEventWorkerThread extends \GPhpThread {
 
 
 class FileLogBufferTest extends TestCase {
+    private $maxDumpTimeIntervalSeconds = 30;
     private $bufferFileLocation = __DIR__ . '/buffer.loghero.io.txt';
+    private $lastDumpTimestampFileLocation = __DIR__ . '/buffer.loghero.io.last-dump.timestamp';
     private $dumpedLogEventsResultFile = __DIR__ . '/buffer-dumped.loghero.io.txt';
     private $logBuffer;
 
@@ -55,15 +58,18 @@ class FileLogBufferTest extends TestCase {
         if(file_exists($this->bufferFileLocation)) {
             unlink($this->bufferFileLocation);
         }
+        if(file_exists($this->lastDumpTimestampFileLocation)) {
+            unlink($this->lastDumpTimestampFileLocation);
+        }
         if(file_exists($this->dumpedLogEventsResultFile)) {
             unlink($this->dumpedLogEventsResultFile);
         }
     }
 
     public function testCreateBufferFileWhenFirstEventArrives() {
-        $this->assertFileNotExists($this->bufferFileLocation);
+        static::assertFileNotExists($this->bufferFileLocation);
         $this->logBuffer->push(createLogEvent('/page-1'));
-        $this->assertFileExists($this->bufferFileLocation);
+        static::assertFileExists($this->bufferFileLocation);
     }
 
     public function testNeedsDumping() {
@@ -79,7 +85,7 @@ class FileLogBufferTest extends TestCase {
 
     public function testDeleteBufferFileOnDump() {
         $logEvents = $this->logBuffer->dump();
-        $this->assertEmpty($logEvents);
+        static::assertEmpty($logEvents);
         $this->logBuffer->push(createLogEvent('/page-1'));
         $this->logBuffer->push(createLogEvent('/page-2'));
         $this->logBuffer->push(createLogEvent('/page-3'));
@@ -99,9 +105,22 @@ class FileLogBufferTest extends TestCase {
             '/page-5'
         ));
     }
+    
+    public function testSetTimestampOfLastDump() {
+        static::assertFalse($this->logBuffer->needsDumping());
+        $this->logBuffer->push(createLogEvent('/page-1'));
+        $this->logBuffer->push(createLogEvent('/page-2'));
+        static::assertFileNotExists($this->lastDumpTimestampFileLocation);
+        $this->logBuffer->dump();
+        static::assertFileExists($this->lastDumpTimestampFileLocation);
+        $GLOBALS['currentTime'] = \microtime(true);
+        static::assertFalse($this->logBuffer->needsDumping());
+        $GLOBALS['currentTime'] = \microtime(true) + $this->maxDumpTimeIntervalSeconds * 1000;
+        static::assertTrue($this->logBuffer->needsDumping());
+    }
 
     public function testHandlesConcurrentAccess() {
-        $this->assertFileNotExists($this->dumpedLogEventsResultFile);
+        static::assertFileNotExists($this->dumpedLogEventsResultFile);
         $criticalSection = null;
         $numberOfThreads = 30;
         $logEventsPerThread = 40;
@@ -121,7 +140,7 @@ class FileLogBufferTest extends TestCase {
         }
         $resultBuffer = new FileLogBuffer($this->dumpedLogEventsResultFile, 1000);
         $logEvents = $resultBuffer->dump();
-        $this->assertEquals($numberOfThreads * $logEventsPerThread, count($logEvents));
+        static::assertEquals($numberOfThreads * $logEventsPerThread, count($logEvents));
     }
 
 }
