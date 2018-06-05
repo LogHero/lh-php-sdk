@@ -2,18 +2,28 @@
 namespace LogHero\Client;
 require_once __DIR__ . '/../src/event/LogEventFactory.php';
 require_once __DIR__ . '/MicrotimeMock.php';
+
 use PHPUnit\Framework\TestCase;
+
 
 class LogEventFactoryTest extends TestCase {
     private $logEventFactory;
+    private $microtimeMock;
 
-    function setUp() {
+    public function setUp() {
         parent::setUp();
         $GLOBALS['currentTime'] = 1523429300.8000;
-        $this->logEventFactory = new LogEventFactory();
+        $this->logEventFactory = new Event\LogEventFactory();
+        $this->microtimeMock = createMicrotimeMock('LogHero\\Client\\Event');
+        $this->microtimeMock->enable();
     }
 
-    function testCreateLogEvent() {
+    public function tearDown() {
+        parent::tearDown();
+        $this->microtimeMock->disable();
+    }
+
+    public function testCreateLogEvent() {
         $this->setupServerGlobal('/page-url');
         $logEvent = $this->logEventFactory->create();
         $this->assertEquals($logEvent->row(), [
@@ -30,7 +40,7 @@ class LogEventFactoryTest extends TestCase {
         ]);
     }
 
-    function testCreateLogEventWithoutPageLoadTimeIfNoRequestTime() {
+    public function testCreateLogEventWithoutPageLoadTimeIfNoRequestTime() {
         $this->setupServerGlobal('/page-url');
         $_SERVER['REQUEST_TIME_FLOAT'] = null;
         $logEvent = $this->logEventFactory->create();

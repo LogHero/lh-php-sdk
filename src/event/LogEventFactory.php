@@ -1,5 +1,5 @@
 <?php
-namespace LogHero\Client;
+namespace LogHero\Client\Event;
 require_once __DIR__ . '/LogEvent.php';
 
 
@@ -12,7 +12,7 @@ class LogEventFactory {
     );
 
     public function create() {
-        $logEvent = new LogEvent();
+        $logEvent = new \LogHero\Client\LogEvent();
         $this
             ->setHostname($logEvent)
             ->setLandingPagePath($logEvent)
