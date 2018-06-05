@@ -1,5 +1,5 @@
 <?php
-namespace LogHero\Client;
+namespace LogHero\Client\Test;
 
 use phpmock\MockBuilder;
 

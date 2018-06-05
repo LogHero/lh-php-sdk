@@ -1,7 +1,10 @@
 <?php
-namespace LogHero\Client;
+namespace LogHero\Client\Test;
 
 use PHPUnit\Framework\TestCase;
+use LogHero\Client\MemLogBuffer;
+use LogHero\Client\APIAccess;
+use LogHero\Client\LogTransport;
 
 
 class LogTransportTest extends TestCase {

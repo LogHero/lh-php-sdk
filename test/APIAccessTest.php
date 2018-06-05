@@ -1,7 +1,9 @@
 <?php
-namespace LogHero\Client;
+namespace LogHero\Client\Test;
 
 use PHPUnit\Framework\TestCase;
+use LogHero\Client\CurlClient;
+use LogHero\Client\APIAccess;
 
 
 class APIAccessForTesting extends APIAccess {

@@ -1,5 +1,7 @@
 <?php
-namespace LogHero\Client;
+namespace LogHero\Client\Test;
+
+use LogHero\Client\LogEvent;
 
 
 function createLogEvent($landingPagePath) {
