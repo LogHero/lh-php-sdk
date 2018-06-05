@@ -49,6 +49,7 @@ class FileLogBufferTest extends TestCase {
 
     public function setUp() {
         parent::setUp();
+        $GLOBALS['currentTime'] = \microtime(true);
         $maxBufferFileSizeInBytes = 1000;
         $this->logBuffer = new FileLogBuffer($this->bufferFileLocation, $maxBufferFileSizeInBytes);
     }
@@ -76,10 +77,14 @@ class FileLogBufferTest extends TestCase {
         static::assertFalse($this->logBuffer->needsDumping());
         $this->logBuffer->push(createLogEvent('/page-1'));
         clearstatcache();
-        static::assertFalse($this->logBuffer->needsDumping());
+        static::assertTrue($this->logBuffer->needsDumping());
+        $this->logBuffer->dump();
+        clearstatcache();
         $this->logBuffer->push(createLogEvent('/page-2'));
         $this->logBuffer->push(createLogEvent('/page-3'));
+        static::assertFalse($this->logBuffer->needsDumping());
         clearstatcache();
+        $this->logBuffer->push(createLogEvent('/page-4'));
         static::assertTrue($this->logBuffer->needsDumping());
     }
 
@@ -111,8 +116,10 @@ class FileLogBufferTest extends TestCase {
         $this->logBuffer->push(createLogEvent('/page-1'));
         $this->logBuffer->push(createLogEvent('/page-2'));
         static::assertFileNotExists($this->lastDumpTimestampFileLocation);
+        static::assertTrue($this->logBuffer->needsDumping());
         $this->logBuffer->dump();
         static::assertFileExists($this->lastDumpTimestampFileLocation);
+        $this->logBuffer->push(createLogEvent('/page-3'));
         $GLOBALS['currentTime'] = \microtime(true);
         static::assertFalse($this->logBuffer->needsDumping());
         $GLOBALS['currentTime'] = \microtime(true) + $this->maxDumpTimeIntervalSeconds * 1000;

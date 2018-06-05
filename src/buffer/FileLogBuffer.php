@@ -22,16 +22,20 @@ class FileLogBuffer implements LogBufferInterface {
     }
 
     public function needsDumping() {
-        if ($this->sizeInBytes() >= $this->maxBufferFileSizeInBytes) {
+        $bufferFileSizeInBytes = $this->sizeInBytes();
+        if ($bufferFileSizeInBytes === 0) {
+            return false;
+        }
+        if ($bufferFileSizeInBytes >= $this->maxBufferFileSizeInBytes) {
             return true;
         }
-        if (file_exists($this->lastDumpTimestampFileLocation)) {
-            $lastDumpTimestamp = filemtime ($this->lastDumpTimestampFileLocation);
-            $currentTimestamp = microtime(true);
-            $nextDumpTimestamp = $lastDumpTimestamp + $this->maxDumpTimeIntervalSeconds;
-            return $currentTimestamp >= $nextDumpTimestamp;
+        if (!file_exists($this->lastDumpTimestampFileLocation)) {
+            return true;
         }
-        return false;
+        $lastDumpTimestamp = filemtime ($this->lastDumpTimestampFileLocation);
+        $currentTimestamp = microtime(true);
+        $nextDumpTimestamp = $lastDumpTimestamp + $this->maxDumpTimeIntervalSeconds;
+        return $currentTimestamp >= $nextDumpTimestamp;
     }
 
     public function dump() {
