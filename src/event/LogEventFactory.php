@@ -1,10 +1,10 @@
 <?php
 namespace LogHero\Client;
+require_once __DIR__ . '/LogEvent.php';
 
 
 class LogEventFactory {
-
-    private $ipAddressKeys = array(
+    private static $ipAddressKeys = array(
         'REMOTE_ADDR',
         'HTTP_X_REAL_IP',
         'HTTP_CLIENT_IP',
@@ -12,7 +12,7 @@ class LogEventFactory {
     );
 
     public function create() {
-        $logEvent = new \LogHero\Client\LogEvent();
+        $logEvent = new LogEvent();
         $this
             ->setHostname($logEvent)
             ->setLandingPagePath($logEvent)
@@ -79,7 +79,7 @@ class LogEventFactory {
 
     private function setIpAddress($logEvent) {
         $ipAddress = null;
-        foreach ($this->ipAddressKeys as $key) {
+        foreach (static::$ipAddressKeys as $key) {
             $ipAddress = filter_var($_SERVER[$key], FILTER_VALIDATE_IP);
             if ($ipAddress) {
                 break;

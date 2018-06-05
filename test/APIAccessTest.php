@@ -1,10 +1,11 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../src/APIAccess.php';
+require_once __DIR__ . '/../src/http/APIAccess.php';
+require_once __DIR__ . '/../src/http/CurlClient.php';
 
 use PHPUnit\Framework\TestCase;
 
-class APIAccessCurlForTesting extends APIAccessCurl {
+class APIAccessForTesting extends APIAccess {
     private $curlClientMock;
 
     public function __construct($apiKey, $clientId, $apiLogPackageEndpoint, $curlClientMock) {
@@ -18,20 +19,20 @@ class APIAccessCurlForTesting extends APIAccessCurl {
 
 }
 
-class APIAccessCurlTest extends TestCase {
+class APIAccessTest extends TestCase {
     private $curlClientMock;
     private $apiKey = 'LH-1234';
     private $clientId = 'Test Client';
-    private $endoint = 'https://www.loghero.io/logs/';
+    private $endpoint = 'https://www.loghero.io/logs/';
     private $apiAccess;
     private $expectedUserAgent;
 
     public function setUp() {
         $this->curlClientMock = $this->createMock(CurlClient::class);
-        $this->apiAccess = new APIAccessCurlForTesting(
+        $this->apiAccess = new APIAccessForTesting(
             $this->apiKey,
             $this->clientId,
-            $this->endoint,
+            $this->endpoint,
             $this->curlClientMock
         );
         $composerPackage = file_get_contents(__DIR__.'/../composer.json');
@@ -71,10 +72,10 @@ class APIAccessCurlTest extends TestCase {
     }
 
     public function testNoPostIfApiKeyInvalid() {
-        $this->apiAccess = new APIAccessCurlForTesting(
+        $this->apiAccess = new APIAccessForTesting(
             '',
             $this->clientId,
-            $this->endoint,
+            $this->endpoint,
             $this->curlClientMock
         );
         $this->curlClientMock

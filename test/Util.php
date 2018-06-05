@@ -1,6 +1,6 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../src/LogEvent.php';
+require_once __DIR__ . '/../src/event/LogEvent.php';
 
 
 function createLogEvent($landingPagePath) {
@@ -16,9 +16,31 @@ function createLogEvent($landingPagePath) {
     return $logEvent;
 }
 
-function assertLandingPagePathsInLogEvents($testCase, $logEvents, $landingPagePaths) {
+function buildExpectedPayloadForLogEvents(array $logEvents) {
+    $rows = array();
+    foreach($logEvents as $logEvent) {
+        $rows[] = $logEvent->row();
+    }
+    return json_encode(array(
+        'columns' => [
+            'cid',
+            'hostname',
+            'landingPage',
+            'method',
+            'statusCode',
+            'timestamp',
+            'pageLoadTime',
+            'ip',
+            'ua',
+            'referer'
+        ],
+        'rows' => $rows
+    ));
+}
+    
+function assertLandingPagePathsInLogEvents($testCase, array $logEvents, array $landingPagePaths) {
     $testCase->assertEquals(count($logEvents), count($landingPagePaths));
-    for ($i = 0; $i < count($logEvents); ++$i) {
+    for ($i = 0, $numLogEvents = count($logEvents); $i < $numLogEvents; ++$i) {
         $testCase->assertEquals($logEvents[$i]->row()[2], $landingPagePaths[$i]);
     }
 }

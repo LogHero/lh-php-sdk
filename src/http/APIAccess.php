@@ -1,19 +1,24 @@
 <?php
 namespace LogHero\Client;
+require_once __DIR__ . '/CurlClient.php';
 
-interface APIAccess {
+
+class APIAccessException extends \Exception {
+
+}
+
+
+interface APIAccessInterface {
     public function submitLogPackage($payloadAsJson);
 }
 
-class APIAccessException extends \Exception {
-    
-}
 
-abstract class APIAccessBase implements APIAccess {
+abstract class APIAccessBase implements APIAccessInterface {
     protected $apiKey;
     protected $apiLogPackageEndpoint;
+    protected $userAgent;
 
-    public function __construct($apiKey, $clientId, $apiLogPackageEndpoint) {
+    public function __construct($apiKey, $clientId, $apiLogPackageEndpoint='https://api.loghero.io/logs/') {
         $this->apiKey = $apiKey;
         $this->apiLogPackageEndpoint = $apiLogPackageEndpoint;
         $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.2.2';
@@ -31,36 +36,7 @@ abstract class APIAccessBase implements APIAccess {
 }
 
 
-class CurlClient {
-    private $curl;
-
-    public function __construct($url) {
-        $this->curl = curl_init($url);
-    }
-
-    public function setOpt($name, $value) {
-        curl_setopt($this->curl, $name, $value);
-    }
-
-    public function exec() {
-        return curl_exec($this->curl);
-    }
-
-    public function getInfo($infoType) {
-        return curl_getinfo($this->curl, $infoType);
-    }
-
-    public function close() {
-        curl_close($this->curl);
-    }
-    
-    public function error() {
-        return curl_error($this->curl);
-    }
-}
-
-
-class APIAccessCurl extends APIAccessBase {
+class APIAccess extends APIAccessBase {
 
     protected function send($payloadAsJson) {
         $curlClient = $this->createCurlClient($this->apiLogPackageEndpoint);

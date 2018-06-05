@@ -1,7 +1,9 @@
 #!/usr/bin/php -q
 <?php
-require_once __DIR__ . '/../src/LogHeroDebug.php';
-require_once __DIR__ . '/../src/LogBuffer.php';
+require_once __DIR__ . '/../src/event/DebugLogEvent.php';
+require_once __DIR__ . '/../src/buffer/FileLogBuffer.php';
+require_once __DIR__ . '/../src/http/APIAccess.php';
+require_once __DIR__ . '/../src/transport/LogTransport.php';
 
 
 date_default_timezone_set('Europe/Berlin');
@@ -47,16 +49,19 @@ $logStringArray = array(
     '89.36.206.3 - - ['.randomDateString().'] "GET /log-hero/articles/ HTTP/1.1" 200 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"',
     '89.36.206.3 - - ['.randomDateString().'] "GET /log-hero/plans/ HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"',
     '76.344.23.424 - - ['.randomDateString().'] "GET /log-hero/themes/ HTTP/1.1" 302 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"',
+    '76.344.23.424 - - ['.randomDateString().'] "GET /log-hero/themes/ HTTP/1.1" 302 - "-" ""',
     '79.228.13.104 - - ['.randomDateString().'] "GET /log-hero/plans/ HTTP/1.1" 404 - "-" "Mozilla/5.0 (Linux; Android 7.0; Pixel C Build/NRD90M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/52.0.2743.98 Safari/537.36"',
-     '57.123.48.399 - - ['.randomDateString().'] "GET /log-hero/plans/ HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"',
+    '57.123.48.399 - - ['.randomDateString().'] "GET /log-hero/plans/ HTTP/1.1" 404 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246"',
     '91.45.15.109 - - ['.randomDateString().'] "GET /log-hero/plans/ HTTP/1.1" 404 - "-" "Mozilla/5.0 (iPhone; CPU iPhone OS 10_3 like Mac OS X) AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75 Mobile/14E5239e Safari/602.1"'
 );
 
 
-$logHero = \LogHero\Client\Client::create('YOUR_API_KEY', 'YOUR CLIENT ID', new \LogHero\Client\FileLogBuffer(__DIR__ . '/buffer.loghero.io'));
+$logBuffer = new \LogHero\Client\FileLogBuffer(__DIR__ . '/buffer.loghero.io');
+$apiAccess = new \LogHero\Client\APIAccess('YOUR_API_KEY', 'YOUR CLIENT ID');
+$logTransport = new \LogHero\Client\LogTransport($logBuffer, $apiAccess);
 foreach ($logStringArray as $logString) {
     print('Submitting '.$logString."\n");
     $lhLogEvent = createLogEvent($logString);
-    $logHero->submit($lhLogEvent);
+    $logTransport->submit($lhLogEvent);
 }
-$logHero->flush();
+$logTransport->flush();
