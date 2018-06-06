@@ -1,6 +1,7 @@
 <?php
-namespace LogHero\Client;
-require_once __DIR__ . '/../src/event/LogEvent.php';
+namespace LogHero\Client\Test;
+
+use LogHero\Client\LogEvent;
 
 
 function createLogEvent($landingPagePath) {

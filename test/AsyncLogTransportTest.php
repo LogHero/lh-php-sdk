@@ -1,11 +1,13 @@
 <?php
-namespace LogHero\Client;
-require_once __DIR__ . '/../src/buffer/MemLogBuffer.php';
-require_once __DIR__ . '/../src/transport/AsyncLogTransport.php';
-require_once __DIR__ . '/Util.php';
-require_once __DIR__ . '/MicrotimeMock.php';
+namespace LogHero\Client\Test;
 
 use PHPUnit\Framework\TestCase;
+use LogHero\Client\CurlClient;
+use LogHero\Client\APIAccess;
+use LogHero\Client\MemLogBuffer;
+use LogHero\Client\APIAccessInterface;
+use LogHero\Client\LogBufferInterface;
+use LogHero\Client\AsyncLogTransport;
 
 
 class AsyncLogTransportForTesting extends AsyncLogTransport {

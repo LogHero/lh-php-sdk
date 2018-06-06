@@ -1,12 +1,8 @@
 <?php
-namespace LogHero\Client;
-require_once __DIR__ . '/../src/buffer/FileLogBuffer.php';
-require_once __DIR__ . '/../src/event/LogEvent.php';
-require_once __DIR__ . '/Util.php';
-require_once __DIR__ . '/MicrotimeMock.php';
-
+namespace LogHero\Client\Test;
 
 use PHPUnit\Framework\TestCase;
+use LogHero\Client\FileLogBuffer;
 
 
 class LogEventWorkerThread extends \GPhpThread {
@@ -46,10 +42,13 @@ class FileLogBufferTest extends TestCase {
     private $lastDumpTimestampFileLocation = __DIR__ . '/buffer.loghero.io.last-dump.timestamp';
     private $dumpedLogEventsResultFile = __DIR__ . '/buffer-dumped.loghero.io.txt';
     private $logBuffer;
+    private $microtimeMock;
 
     public function setUp() {
         parent::setUp();
         $GLOBALS['currentTime'] = \microtime(true);
+        $this->microtimeMock = createMicrotimeMock();
+        $this->microtimeMock->enable();
         $maxBufferFileSizeInBytes = 1000;
         $this->logBuffer = new FileLogBuffer($this->bufferFileLocation, $maxBufferFileSizeInBytes);
     }
@@ -65,6 +64,7 @@ class FileLogBufferTest extends TestCase {
         if(file_exists($this->dumpedLogEventsResultFile)) {
             unlink($this->dumpedLogEventsResultFile);
         }
+        $this->microtimeMock->disable();
     }
 
     public function testCreateBufferFileWhenFirstEventArrives() {

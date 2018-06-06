@@ -1,11 +1,10 @@
 <?php
-namespace LogHero\Client;
-require_once __DIR__ . '/../src/buffer/LogBuffer.php';
-require_once __DIR__ . '/../src/transport/LogTransport.php';
-require_once __DIR__ . '/Util.php';
-require_once __DIR__ . '/MicrotimeMock.php';
+namespace LogHero\Client\Test;
 
 use PHPUnit\Framework\TestCase;
+use LogHero\Client\MemLogBuffer;
+use LogHero\Client\APIAccess;
+use LogHero\Client\LogTransport;
 
 
 class LogTransportTest extends TestCase {
