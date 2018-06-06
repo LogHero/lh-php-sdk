@@ -26,8 +26,8 @@
     "require": {
     },
     "autoload": {
-        "classmap": [
-            "src/"
+        "files": [
+            "autoload.php"
         ]
     },
     "autoload-dev": {
