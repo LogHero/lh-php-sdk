@@ -6,3 +6,4 @@ vendor/
 *.log
 buffer.loghero.io
 buffer-dumped.loghero.io.*
+*.timestamp

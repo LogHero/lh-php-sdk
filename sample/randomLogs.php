@@ -1,9 +1,6 @@
 #!/usr/bin/php -q
 <?php
-require_once __DIR__ . '/../src/event/DebugLogEvent.php';
-require_once __DIR__ . '/../src/buffer/FileLogBuffer.php';
-require_once __DIR__ . '/../src/http/APIAccess.php';
-require_once __DIR__ . '/../src/transport/LogTransport.php';
+require_once __DIR__ . '/../autoload.php';
 
 
 date_default_timezone_set('Europe/Berlin');
