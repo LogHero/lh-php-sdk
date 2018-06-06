@@ -11,7 +11,7 @@ class LogEventFactory {
     );
 
     public function create() {
-        $logEvent = new \LogHero\Client\LogEvent();
+        $logEvent = new LogEvent();
         $this
             ->setHostname($logEvent)
             ->setLandingPagePath($logEvent)
