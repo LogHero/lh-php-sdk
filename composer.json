@@ -2,8 +2,8 @@
     "name": "loghero/sdk",
     "version": "0.3.0",
     "type": "library",
-    "description": "The official PHP client SDK for loghero.io",
-    "homepage": "https://loghero.io/",
+    "description": "The official PHP client SDK for log-hero.com",
+    "homepage": "https://log-hero.com/",
     "license": "MIT",
     "keywords": [
         "logging",

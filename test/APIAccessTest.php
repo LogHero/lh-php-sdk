@@ -24,7 +24,7 @@ class APIAccessTest extends TestCase {
     private $curlClientMock;
     private $apiKey = 'LH-1234';
     private $clientId = 'Test Client';
-    private $endpoint = 'https://www.loghero.io/logs/';
+    private $endpoint = 'https://api.loghero.io/logs/';
     private $apiAccess;
     private $expectedUserAgent;
 
@@ -87,7 +87,7 @@ class APIAccessTest extends TestCase {
 
     /**
      * @expectedException LogHero\Client\APIAccessException
-     * @expectedExceptionMessage Call to URL https://www.loghero.io/logs/ failed with status 500; Message: Server error
+     * @expectedExceptionMessage Call to URL https://api.loghero.io/logs/ failed with status 500; Message: Server error
      */
     public function testExceptionIfErrorResponse() {
         $this->curlClientMock
