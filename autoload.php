@@ -12,6 +12,7 @@ spl_autoload_register(
                 'loghero\\client\\apiaccessinterface' => '/src/http/APIAccessInterface.php',
                 'loghero\\client\\apikeystorageinterface' => '/src/http/APIKeyStorageInterface.php',
                 'loghero\\client\\apikeyfilestorage' => '/src/http/APIKeyFileStorage.php',
+                'loghero\\client\\apikeymemstorage' => '/src/http/APIKeyMemStorage.php',
                 'loghero\\client\\apikeyundefinedexception' => '/src/http/APIKeyUndefinedException.php',
                 'loghero\\client\\asynclogtransport' => '/src/transport/AsyncLogTransport.php',
                 'loghero\\client\\curlclient' => '/src/http/CurlClient.php',
