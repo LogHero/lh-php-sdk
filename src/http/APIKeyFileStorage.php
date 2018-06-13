@@ -19,15 +19,13 @@ class APIKeyFileStorage implements APIKeyStorageInterface {
         if ($this->key) {
             return $this->key;
         }
-        try {
-            $this->key = file_get_contents($this->keyStorageLocation);
-            if (!$this->key) {
-                throw new APIKeyUndefinedException('API key storage is empty');
-            }
-            return $this->key;
-        }
-        catch (\Exception $e) {
+        if (!file_exists($this->keyStorageLocation)) {
             throw new APIKeyUndefinedException('Cannot read API key storage');
         }
+        $this->key = file_get_contents($this->keyStorageLocation);
+        if (!$this->key) {
+            throw new APIKeyUndefinedException('API key storage is empty');
+        }
+        return $this->key;
     }
 }
