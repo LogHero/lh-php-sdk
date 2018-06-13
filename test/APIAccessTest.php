@@ -77,10 +77,6 @@ class APIAccessTest extends TestCase {
         $this->apiAccess->submitLogPackage('LOG DATA');
     }
 
-    /**
-     * @expectedException LogHero\Client\APIKeyUndefinedException
-     * @expectedExceptionMessage API key storage is empty
-     */
     public function testNoPostIfApiKeyInvalid() {
         $this->apiAccess = new APIAccessForTesting(
             new APIKeyMemStorage(),

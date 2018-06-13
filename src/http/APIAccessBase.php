@@ -14,7 +14,11 @@ abstract class APIAccessBase implements APIAccessInterface {
     }
 
     public function submitLogPackage($payloadAsJson) {
-        $this->send($payloadAsJson);
+        try {
+            $this->send($payloadAsJson);
+        }
+        catch(APIKeyUndefinedException $e) {
+        }
     }
 
     abstract protected function send($payloadAsJson);
