@@ -9,7 +9,7 @@ class APIAccess extends APIAccessBase {
         $curlClient->setOpt(CURLOPT_HTTPHEADER, array(
             'Content-type: application/json',
             'Content-encoding: deflate',
-            'Authorization: '.$this->apiKey,
+            'Authorization: '.$this->apiKeyStorage->getKey(),
             'User-Agent: '.$this->userAgent
         ));
         $curlClient->setOpt(CURLOPT_CUSTOMREQUEST, 'PUT');

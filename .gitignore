@@ -4,6 +4,7 @@
 vendor/
 *.DS_Store
 *.log
+key.loghero.io
 buffer.loghero.io
 buffer-dumped.loghero.io.*
 *.timestamp
