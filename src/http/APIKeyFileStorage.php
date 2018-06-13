@@ -12,7 +12,7 @@ class APIKeyFileStorage implements APIKeyStorageInterface {
 
     public function setKey($apiKey) {
         file_put_contents($this->keyStorageLocation, $apiKey, LOCK_EX);
-        chmod($this->keyStorageLocation, 0600);
+        chmod($this->keyStorageLocation, 0666);
     }
     
     public function getKey() {
