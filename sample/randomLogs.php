@@ -56,7 +56,7 @@ $logStringArray = array(
 $apiKeyStorage = new \LogHero\Client\APIKeyFileStorage(__DIR__ . '/key.loghero.io');
 $apiKeyStorage->setKey('YOUR_API_KEY');
 $logBuffer = new \LogHero\Client\FileLogBuffer(__DIR__ . '/buffer.loghero.io');
-$apiAccess = new \LogHero\Client\APIAccess($apiKeyStorage, 'YOUR CLIENT ID');
+$apiAccess = new \LogHero\Client\APIAccess($apiKeyStorage, 'YOUR CLIENT ID', new \LogHero\Client\APISettingsDefault());
 $logTransport = new \LogHero\Client\LogTransport($logBuffer, $apiAccess);
 foreach ($logStringArray as $logString) {
     print('Submitting '.$logString."\n");
