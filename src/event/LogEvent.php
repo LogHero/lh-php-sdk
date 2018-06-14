@@ -2,11 +2,6 @@
 namespace LogHero\Client;
 
 
-class InvalidLogEventException extends \Exception {
-
-}
-
-
 class LogEvent {
     protected $landingPagePath;
     protected $method;

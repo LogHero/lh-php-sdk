@@ -1,9 +1,9 @@
 {
     "name": "loghero/sdk",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "type": "library",
-    "description": "The official PHP client SDK for loghero.io",
-    "homepage": "https://loghero.io/",
+    "description": "The official PHP client SDK for log-hero.com",
+    "homepage": "https://log-hero.com/",
     "license": "MIT",
     "keywords": [
         "logging",
@@ -19,9 +19,21 @@
         }
     ],
     "require-dev": {
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "^5.7",
+        "zhgzhg/gphpthread": "1.0.0",
+        "php-mock/php-mock": "^2.0"
     },
     "require": {
-        "zhgzhg/gphpthread": "1.0.0"
+    },
+    "autoload": {
+        "files": [
+            "autoload.php"
+        ]
+    },
+    "autoload-dev": {
+        "files": [
+            "test/Util.php",
+            "test/MicrotimeMock.php"
+        ]
     }
 }

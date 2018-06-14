@@ -1,24 +1,22 @@
 <?php
 namespace LogHero\Client;
-require_once __DIR__ . '/../http/APIAccess.php';
-require_once __DIR__ . '/LogTransport.php';
 
 
 class AsyncLogTransport extends LogTransport {
     private $clientId;
-    private $apiKey;
+    private $authorizationToken;
     private $triggerEndpoint;
 
     public function __construct(
         LogBufferInterface $logBuffer,
         APIAccessInterface $apiAccess,
         $clientId,
-        $secret,
+        $authorizationToken,
         $triggerEndpoint
     ) {
         parent::__construct($logBuffer, $apiAccess);
         $this->clientId = $clientId;
-        $this->secret = $secret;
+        $this->authorizationToken = $authorizationToken;
         $this->triggerEndpoint = $triggerEndpoint;
     }
 
@@ -33,7 +31,7 @@ class AsyncLogTransport extends LogTransport {
     private function triggerAsyncFlush() {
         $curlClient = $this->createCurlClient($this->triggerEndpoint);
         $curlClient->setOpt(CURLOPT_HTTPHEADER, array(
-            'Authorization: '.$this->secret,
+            'Token: '.$this->authorizationToken,
             'User-Agent: '.$this->clientId
         ));
         $curlClient->setOpt(CURLOPT_CUSTOMREQUEST, 'GET');

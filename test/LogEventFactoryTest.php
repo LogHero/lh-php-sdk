@@ -1,19 +1,28 @@
 <?php
-namespace LogHero\Client;
-require_once __DIR__ . '/../src/event/LogEventFactory.php';
-require_once __DIR__ . '/MicrotimeMock.php';
+namespace LogHero\Client\Test;
+
 use PHPUnit\Framework\TestCase;
+use LogHero\Client\LogEventFactory;
+
 
 class LogEventFactoryTest extends TestCase {
     private $logEventFactory;
+    private $microtimeMock;
 
-    function setUp() {
+    public function setUp() {
         parent::setUp();
         $GLOBALS['currentTime'] = 1523429300.8000;
         $this->logEventFactory = new LogEventFactory();
+        $this->microtimeMock = createMicrotimeMock();
+        $this->microtimeMock->enable();
     }
 
-    function testCreateLogEvent() {
+    public function tearDown() {
+        parent::tearDown();
+        $this->microtimeMock->disable();
+    }
+
+    public function testCreateLogEvent() {
         $this->setupServerGlobal('/page-url');
         $logEvent = $this->logEventFactory->create();
         $this->assertEquals($logEvent->row(), [
@@ -30,7 +39,7 @@ class LogEventFactoryTest extends TestCase {
         ]);
     }
 
-    function testCreateLogEventWithoutPageLoadTimeIfNoRequestTime() {
+    public function testCreateLogEventWithoutPageLoadTimeIfNoRequestTime() {
         $this->setupServerGlobal('/page-url');
         $_SERVER['REQUEST_TIME_FLOAT'] = null;
         $logEvent = $this->logEventFactory->create();
@@ -47,8 +56,7 @@ class LogEventFactoryTest extends TestCase {
             'https://www.loghero.io'
         ]);
     }
-
-
+    
     private function setupServerGlobal($pageUrl) {
         $_SERVER['REQUEST_URI'] = $pageUrl;
         $_SERVER['REQUEST_METHOD'] = 'POST';
@@ -59,5 +67,4 @@ class LogEventFactoryTest extends TestCase {
         $_SERVER['HTTP_HOST'] = 'example.org';
         http_response_code(301);
     }
-
 }

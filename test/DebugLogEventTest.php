@@ -1,9 +1,9 @@
 <?php
-namespace LogHero\Client;
-
-require_once __DIR__ . '/../src/event/DebugLogEvent.php';
+namespace LogHero\Client\Test;
 
 use PHPUnit\Framework\TestCase;
+use LogHero\Client\DebugLogEvent;
+
 
 class DebugLogEventTest extends TestCase {
 

@@ -2,11 +2,6 @@
 namespace LogHero\Client;
 
 
-interface LogTransportInterface {
-    public function flush();
-}
-
-
 class LogTransport implements LogTransportInterface {
     protected $logBuffer;
     protected $apiAccess;
