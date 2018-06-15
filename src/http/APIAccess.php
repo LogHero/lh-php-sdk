@@ -5,7 +5,8 @@ namespace LogHero\Client;
 class APIAccess extends APIAccessBase {
 
     protected function send($payloadAsJson) {
-        $curlClient = $this->createCurlClient($this->apiLogPackageEndpoint);
+        $apiLogPackageEndpoint = $this->apiSettings->getAPILogPackageEndpoint();
+        $curlClient = $this->createCurlClient($apiLogPackageEndpoint);
         $curlClient->setOpt(CURLOPT_HTTPHEADER, array(
             'Content-type: application/json',
             'Content-encoding: deflate',
@@ -20,7 +21,7 @@ class APIAccess extends APIAccessBase {
             $errorMessage = $curlClient->error();
             $curlClient->close();
             throw new APIAccessException(
-                'Call to URL '.$this->apiLogPackageEndpoint.' failed with status '.$status.'; Message: '.$errorMessage
+                'Call to URL '.$apiLogPackageEndpoint.' failed with status '.$status.'; Message: '.$errorMessage
             );
         }
         $curlClient->close();

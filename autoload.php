@@ -8,6 +8,8 @@ spl_autoload_register(
             $classes = array(
                 'loghero\\client\\apiaccess' => '/src/http/APIAccess.php',
                 'loghero\\client\\apiaccessbase' => '/src/http/APIAccessBase.php',
+                'loghero\\client\\apisettingsinterface' => '/src/http/APISettingsInterface.php',
+                'loghero\\client\\apisettingsdefault' => '/src/http/APISettingsDefault.php',
                 'loghero\\client\\apiaccessexception' => '/src/http/APIAccessException.php',
                 'loghero\\client\\apiaccessinterface' => '/src/http/APIAccessInterface.php',
                 'loghero\\client\\apikeystorageinterface' => '/src/http/APIKeyStorageInterface.php',
