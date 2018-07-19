@@ -1,5 +1,7 @@
 <?php
 namespace LogHero\Client;
+use \LogHero\Client\APIAccessException;
+use \LogHero\Client\AsyncFlushFailedException;
 
 
 class AsyncLogTransport extends LogTransport {
@@ -21,7 +23,14 @@ class AsyncLogTransport extends LogTransport {
     }
 
     public function flush() {
-        $this->triggerAsyncFlush();
+        try {
+            $this->triggerAsyncFlush();
+        }
+        // TODO This needs a test case
+        catch(APIAccessException $e) {
+            $this->dumpLogEvents();
+            throw new AsyncFlushFailedException($e);
+        }
     }
 
     public function dumpLogEvents() {
