@@ -40,7 +40,7 @@ class LogEventFactory {
     }
 
     private function setStatusCode($logEvent) {
-        if ( function_exists( 'http_response_code' ) ) {
+        if ( function_exists('http_response_code') ) {
             $logEvent->setStatusCode(http_response_code());
         }
         return $this;
@@ -64,7 +64,7 @@ class LogEventFactory {
         $pageLoadTimeMilliSec = null;
         if (!empty($_SERVER['REQUEST_TIME_FLOAT'])) { // PHP >= 5.4
             $unixTimestamp = $_SERVER['REQUEST_TIME_FLOAT'];
-            $pageLoadTimeMilliSec = (int) (1000 * (microtime(true) - $unixTimestamp));
+            $pageLoadTimeMilliSec = 1000 * (microtime(true) - $unixTimestamp);
             $logEvent->setPageLoadTimeMilliSec($pageLoadTimeMilliSec);
         }
         else {
