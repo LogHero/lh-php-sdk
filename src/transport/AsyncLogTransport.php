@@ -26,7 +26,6 @@ class AsyncLogTransport extends LogTransport {
         try {
             $this->triggerAsyncFlush();
         }
-        // TODO This needs a test case
         catch(APIAccessException $e) {
             $this->dumpLogEvents();
             throw new AsyncFlushFailedException($e);

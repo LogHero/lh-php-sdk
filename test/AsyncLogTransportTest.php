@@ -8,6 +8,7 @@ use LogHero\Client\MemLogBuffer;
 use LogHero\Client\APIAccessInterface;
 use LogHero\Client\LogBufferInterface;
 use LogHero\Client\AsyncLogTransport;
+use LogHero\Client\AsyncFlushFailedException;
 
 
 class AsyncLogTransportForTesting extends AsyncLogTransport {
@@ -98,5 +99,25 @@ class AsyncLogTransportTest extends TestCase {
                 createLogEvent('/page-3')
             ))));
         $this->flushStrategy->dumpLogEvents();
+    }
+    /**
+     * @expectedException LogHero\Client\AsyncFlushFailedException
+     * @expectedExceptionMessage LogHero\Client\APIAccessException: Call to URL /flush.php failed with status 403; Message:
+     */
+    public function testDumpSyncIfAsyncTriggerFailed() {
+        $this->logBuffer->push(createLogEvent('/page-1'));
+        $this->logBuffer->push(createLogEvent('/page-2'));
+        $this->curlClientMock
+            ->expects($this->once())
+            ->method('getInfo')
+            ->willReturn(403);
+        $this->apiAccessStub
+            ->expects($this->once())
+            ->method('submitLogPackage')
+            ->with($this->equalTo(buildExpectedPayloadForLogEvents(array(
+                createLogEvent('/page-1'),
+                createLogEvent('/page-2')
+            ))));
+        $this->flushStrategy->flush();
     }
 }
