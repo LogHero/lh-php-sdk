@@ -1,7 +1,5 @@
 <?php
 namespace LogHero\Client;
-use \LogHero\Client\APIAccessException;
-use \LogHero\Client\AsyncFlushFailedException;
 
 
 class AsyncLogTransport extends LogTransport {
