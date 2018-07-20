@@ -55,7 +55,9 @@ class LogEventFactory {
     }
 
     private function setReferer($logEvent) {
-        $logEvent->setReferer($_SERVER['HTTP_REFERER']);
+        if (array_key_exists('HTTP_REFERER', $_SERVER)) {
+            $logEvent->setReferer($_SERVER['HTTP_REFERER']);
+        }
         return $this;
     }
 
