@@ -64,7 +64,7 @@ class LogEventFactory {
         $pageLoadTimeMilliSec = null;
         if (!empty($_SERVER['REQUEST_TIME_FLOAT'])) { // PHP >= 5.4
             $unixTimestamp = $_SERVER['REQUEST_TIME_FLOAT'];
-            $pageLoadTimeMilliSec = 1000 * (microtime(true) - $unixTimestamp);
+            $pageLoadTimeMilliSec = (int) (1000 * (microtime(true) - $unixTimestamp));
             $logEvent->setPageLoadTimeMilliSec($pageLoadTimeMilliSec);
         }
         else {
