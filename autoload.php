@@ -28,6 +28,7 @@ spl_autoload_register(
                 'loghero\\client\\logtransportinterface' => '/src/transport/LogTransportInterface.php',
                 'loghero\\client\\asyncflushfailedexception' => '/src/transport/AsyncFlushFailedException.php',
                 'loghero\\client\\memlogbuffer' => '/src/buffer/MemLogBuffer.php',
+                'loghero\\client\\logheroerrors' => '/src/error/LogHeroErrors.php',
             );
         }
         $cn = strtolower($class);
