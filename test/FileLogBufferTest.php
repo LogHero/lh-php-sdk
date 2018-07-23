@@ -49,8 +49,8 @@ class FileLogBufferTest extends TestCase {
         $GLOBALS['currentTime'] = \microtime(true);
         $this->microtimeMock = createMicrotimeMock();
         $this->microtimeMock->enable();
-        $maxBufferFileSizeInBytes = 1000;
-        $this->logBuffer = new FileLogBuffer($this->bufferFileLocation, $maxBufferFileSizeInBytes);
+        $flushBufferFileSizeInBytes = 1000;
+        $this->logBuffer = new FileLogBuffer($this->bufferFileLocation, $flushBufferFileSizeInBytes);
     }
 
     public function tearDown() {
@@ -85,6 +85,12 @@ class FileLogBufferTest extends TestCase {
         static::assertFalse($this->logBuffer->needsDumping());
         clearstatcache();
         $this->logBuffer->push(createLogEvent('/page-4'));
+        // False even though we reach the flush buffer size
+        // This is because we read the buffer file size before pushing the log event to check if the max buffer size is already reached
+        // The size of the current log event is considered when adding the next log event to the buffer
+        static::assertFalse($this->logBuffer->needsDumping());
+        clearstatcache();
+        $this->logBuffer->push(createLogEvent('/page-5'));
         static::assertTrue($this->logBuffer->needsDumping());
     }
 
@@ -124,6 +130,29 @@ class FileLogBufferTest extends TestCase {
         static::assertFalse($this->logBuffer->needsDumping());
         $GLOBALS['currentTime'] = \microtime(true) + $this->maxDumpTimeIntervalSeconds * 1000;
         static::assertTrue($this->logBuffer->needsDumping());
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Inconsistent configuration: $maxPushBufferFileSizeInBytes is smaller than $flushBufferFileSizeInBytes: 100 <= 1000
+     */
+    public function testVerifyLogBufferConfiguration() {
+        new FileLogBuffer($this->bufferFileLocation, 1000, 300, 100);
+    }
+    /**
+     * @expectedException \LogHero\Client\BufferSizeExceededException
+     * @expectedExceptionMessage Maximum buffer size reached (1000 Bytes)! Pushing further log events is prohibited to avoid running out of disk space
+     */
+    public function testRaiseBufferSizeExceededIfMaxBufferSizeIsReached() {
+        $logBuffer = new FileLogBuffer($this->bufferFileLocation, 100, 300, 1000);
+        clearstatcache();
+        $logBuffer->push(createLogEvent('/page-1'));
+        clearstatcache();
+        $logBuffer->push(createLogEvent('/page-2'));
+        clearstatcache();
+        $logBuffer->push(createLogEvent('/page-3'));
+        clearstatcache();
+        $logBuffer->push(createLogEvent('/page-4'));
     }
 
     public function testHandlesConcurrentAccess() {
