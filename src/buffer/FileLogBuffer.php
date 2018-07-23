@@ -13,7 +13,7 @@ class FileLogBuffer implements LogBufferInterface {
         $bufferFileName,
         $flushBufferFileSizeInBytes=100000,
         $maxDumpTimeIntervalSeconds=300,
-        $maxPushBufferFileSizeInBytes=100000000
+        $maxPushBufferFileSizeInBytes=5000000
     ) {
         if ($maxPushBufferFileSizeInBytes <= $flushBufferFileSizeInBytes) {
             throw new \Exception(
