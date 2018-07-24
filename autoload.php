@@ -22,6 +22,7 @@ spl_autoload_register(
                 'loghero\\client\\filelogbuffer' => '/src/buffer/FileLogBuffer.php',
                 'loghero\\client\\invalidlogeventexception' => '/src/event/InvalidLogEventException.php',
                 'loghero\\client\\logbufferinterface' => '/src/buffer/LogBufferInterface.php',
+                'loghero\\client\\buffersizeexceededexception' => '/src/buffer/BufferSizeExceededException.php',
                 'loghero\\client\\logevent' => '/src/event/LogEvent.php',
                 'loghero\\client\\logeventfactory' => '/src/event/LogEventFactory.php',
                 'loghero\\client\\logtransport' => '/src/transport/LogTransport.php',
