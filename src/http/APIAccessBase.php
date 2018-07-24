@@ -10,7 +10,7 @@ abstract class APIAccessBase implements APIAccessInterface {
     public function __construct(APIKeyStorageInterface $apiKeyStorage, $clientId, APISettingsInterface $apiSettings) {
         $this->apiKeyStorage = $apiKeyStorage;
         $this->apiSettings = $apiSettings;
-        $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.3.0';
+        $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.4.0';
     }
 
     public function submitLogPackage($payloadAsJson) {
