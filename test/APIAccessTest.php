@@ -3,16 +3,25 @@ namespace LogHero\Client\Test;
 
 use LogHero\Client\APIKeyMemStorage;
 use LogHero\Client\APIKeyStorageInterface;
+use LogHero\Client\APISettingsInterface;
 use PHPUnit\Framework\TestCase;
 use LogHero\Client\CurlClient;
 use LogHero\Client\APIAccess;
 
 
+class APISettingsTest implements APISettingsInterface {
+
+    public function getAPILogPackageEndpoint() {
+        return 'https://test.loghero.io/logs/';
+    }
+}
+
+
 class APIAccessForTesting extends APIAccess {
     private $curlClientMock;
 
-    public function __construct(APIKeyStorageInterface $apiKeyStorage, $clientId, $apiLogPackageEndpoint, $curlClientMock) {
-        parent::__construct($apiKeyStorage, $clientId, $apiLogPackageEndpoint);
+    public function __construct(APIKeyStorageInterface $apiKeyStorage, $clientId, APISettingsInterface $apiSettings, $curlClientMock) {
+        parent::__construct($apiKeyStorage, $clientId, $apiSettings);
         $this->curlClientMock = $curlClientMock;
     }
 
@@ -27,18 +36,19 @@ class APIAccessTest extends TestCase {
     private $apiKey = 'LH-1234';
     private $apiKeyStorage;
     private $clientId = 'Test Client';
-    private $endpoint = 'https://api.loghero.io/logs/';
+    private $apiSettings;
     private $apiAccess;
     private $expectedUserAgent;
 
     public function setUp() {
         $this->apiKeyStorage = new APIKeyMemStorage();
         $this->apiKeyStorage->setKey($this->apiKey);
+        $this->apiSettings = new APISettingsTest();
         $this->curlClientMock = $this->createMock(CurlClient::class);
         $this->apiAccess = new APIAccessForTesting(
             $this->apiKeyStorage,
             $this->clientId,
-            $this->endpoint,
+            $this->apiSettings,
             $this->curlClientMock
         );
         $composerPackage = file_get_contents(__DIR__.'/../composer.json');
@@ -81,7 +91,7 @@ class APIAccessTest extends TestCase {
         $this->apiAccess = new APIAccessForTesting(
             new APIKeyMemStorage(),
             $this->clientId,
-            $this->endpoint,
+            $this->apiSettings,
             $this->curlClientMock
         );
         $this->curlClientMock
@@ -92,7 +102,7 @@ class APIAccessTest extends TestCase {
 
     /**
      * @expectedException LogHero\Client\APIAccessException
-     * @expectedExceptionMessage Call to URL https://api.loghero.io/logs/ failed with status 500; Message: Server error
+     * @expectedExceptionMessage Call to URL https://test.loghero.io/logs/ failed with status 500; Message: Server error
      */
     public function testExceptionIfErrorResponse() {
         $this->curlClientMock

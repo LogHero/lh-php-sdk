@@ -56,6 +56,24 @@ class LogEventFactoryTest extends TestCase {
             'https://www.loghero.io'
         ]);
     }
+
+    public function testHandleRefererNotSet() {
+        $this->setupServerGlobal('/page-url');
+        unset($_SERVER['HTTP_REFERER']);
+        $logEvent = $this->logEventFactory->create();
+        $this->assertEquals($logEvent->row(), [
+            'd113ff3141723d50fec2933977c89ea6',
+            'example.org',
+            '/page-url',
+            'POST',
+            301,
+            '2018-04-11T06:48:18+00:00',
+            2389,
+            'f528764d624db129b32c21fbca0cb8d6',
+            'Firefox',
+            null
+        ]);
+    }
     
     private function setupServerGlobal($pageUrl) {
         $_SERVER['REQUEST_URI'] = $pageUrl;

@@ -3,14 +3,14 @@ namespace LogHero\Client;
 
 
 abstract class APIAccessBase implements APIAccessInterface {
-    protected $apiKeyStorage;
-    protected $apiLogPackageEndpoint;
-    protected $userAgent;
+    private $apiKeyStorage;
+    private $apiSettings;
+    private $userAgent;
 
-    public function __construct(APIKeyStorageInterface $apiKeyStorage, $clientId, $apiLogPackageEndpoint='https://api.loghero.io/logs/') {
+    public function __construct(APIKeyStorageInterface $apiKeyStorage, $clientId, APISettingsInterface $apiSettings) {
         $this->apiKeyStorage = $apiKeyStorage;
-        $this->apiLogPackageEndpoint = $apiLogPackageEndpoint;
-        $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.3.0';
+        $this->apiSettings = $apiSettings;
+        $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.4.0';
     }
 
     public function submitLogPackage($payloadAsJson) {
@@ -19,6 +19,18 @@ abstract class APIAccessBase implements APIAccessInterface {
         }
         catch(APIKeyUndefinedException $e) {
         }
+    }
+
+    protected function getApiKeyStorage() {
+        return $this->apiKeyStorage;
+    }
+
+    protected function getApiSettings() {
+        return $this->apiSettings;
+    }
+
+    protected function getUserAgent() {
+        return $this->userAgent;
     }
 
     abstract protected function send($payloadAsJson);

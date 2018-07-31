@@ -21,7 +21,13 @@ class AsyncLogTransport extends LogTransport {
     }
 
     public function flush() {
-        $this->triggerAsyncFlush();
+        try {
+            $this->triggerAsyncFlush();
+        }
+        catch(APIAccessException $e) {
+            $this->dumpLogEvents();
+            throw new AsyncFlushFailedException($e);
+        }
     }
 
     public function dumpLogEvents() {
