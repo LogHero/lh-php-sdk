@@ -6,11 +6,11 @@ use LogHero\Client\LogEvent;
 
 
 class LogEventTest extends TestCase {
-    private $refererColumnIdx = 9;
+    private $refererColumnIdx = 10;
 
     public function testCreateColumns() {
         $logEvent = $this->createValidLogEvent();
-        $this->assertEquals(count($logEvent->columns()), 10);
+        $this->assertEquals(count($logEvent->columns()), 11);
     }
 
     public function testCreateRowFromLogEventData() {
@@ -18,6 +18,7 @@ class LogEventTest extends TestCase {
         $this->assertEquals($logEvent->row(), [
             '4355d3ffc1fd8aa45fc712ed92e23081',
             'www.example.com',
+            'https',
             '/home',
             'GET',
             '200',
@@ -87,6 +88,7 @@ class LogEventTest extends TestCase {
         $this->assertEquals($logEvent->row(), [
             '4355d3ffc1fd8aa45fc712ed92e23081',
             'www.example.com',
+            'https',
             '/home',
             'GET',
             '200',
@@ -117,6 +119,7 @@ class LogEventTest extends TestCase {
         $logEvent
             ->setIpAddress('123.456.78.9')
             ->setHostName('www.example.com')
+            ->setProtocol('https')
             ->setLandingPagePath('/home')
             ->setMethod('GET')
             ->setStatusCode('200')
