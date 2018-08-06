@@ -25,9 +25,10 @@ class LogEventFactoryTest extends TestCase {
     public function testCreateLogEvent() {
         $this->setupServerGlobal('/page-url');
         $logEvent = $this->logEventFactory->create();
-        $this->assertEquals($logEvent->row(), [
+        static::assertEquals($logEvent->row(), [
             'd113ff3141723d50fec2933977c89ea6',
             'example.org',
+            'http',
             '/page-url',
             'POST',
             301,
@@ -43,9 +44,10 @@ class LogEventFactoryTest extends TestCase {
         $this->setupServerGlobal('/page-url');
         $_SERVER['REQUEST_TIME_FLOAT'] = null;
         $logEvent = $this->logEventFactory->create();
-        $this->assertEquals($logEvent->row(), [
+        static::assertEquals($logEvent->row(), [
             'd113ff3141723d50fec2933977c89ea6',
             'example.org',
+            'http',
             '/page-url',
             'POST',
             301,
@@ -61,9 +63,10 @@ class LogEventFactoryTest extends TestCase {
         $this->setupServerGlobal('/page-url');
         unset($_SERVER['HTTP_REFERER']);
         $logEvent = $this->logEventFactory->create();
-        $this->assertEquals($logEvent->row(), [
+        static::assertEquals($logEvent->row(), [
             'd113ff3141723d50fec2933977c89ea6',
             'example.org',
+            'http',
             '/page-url',
             'POST',
             301,
@@ -74,6 +77,15 @@ class LogEventFactoryTest extends TestCase {
             null
         ]);
     }
+
+    public function testSetHttpsProtocol() {
+        $protocolColumnIdx = 2;
+        $this->setupServerGlobal('/page-url');
+        $_SERVER['HTTPS'] = true;
+        static::assertEquals($this->logEventFactory->create()->row()[$protocolColumnIdx], 'https');
+        $_SERVER['HTTPS'] = 'off';
+        static::assertEquals($this->logEventFactory->create()->row()[$protocolColumnIdx], 'http');
+    }
     
     private function setupServerGlobal($pageUrl) {
         $_SERVER['REQUEST_URI'] = $pageUrl;
@@ -83,6 +95,7 @@ class LogEventFactoryTest extends TestCase {
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
         $_SERVER['HTTP_REFERER'] = 'https://www.loghero.io';
         $_SERVER['HTTP_HOST'] = 'example.org';
+        unset($_SERVER['HTTPS']);
         http_response_code(301);
     }
 }

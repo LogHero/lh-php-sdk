@@ -11,10 +11,16 @@ class LogEvent {
     protected $userAgent;
     protected $ipAddress;
     protected $hostname;
-    protected $referer = null;
+    protected $protocol;
+    protected $referer;
 
     public function setHostname($hostname) {
         $this->hostname = $hostname;
+        return $this;
+    }
+
+    public function setProtocol($protocol) {
+        $this->protocol = $protocol;
         return $this;
     }
 
@@ -74,6 +80,7 @@ class LogEvent {
         return array(
             'cid',
             'hostname',
+            'protocol',
             'landingPage',
             'method',
             'statusCode',
@@ -90,6 +97,7 @@ class LogEvent {
         return array(
             LogEvent::buildCidFromIPAndUserAgent($this->ipAddress, $this->userAgent),
             $this->hostname,
+            $this->protocol,
             $this->landingPagePath,
             $this->method,
             $this->statusCode,

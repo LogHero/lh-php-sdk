@@ -10,6 +10,7 @@ function createLogEvent($landingPagePath) {
         ->setUserAgent('Firefox')
         ->setIpAddress('123.45.67.89')
         ->setHostname('local.loghero.io')
+        ->setProtocol('https')
         ->setLandingPagePath($landingPagePath)
         ->setMethod('GET')
         ->setStatusCode(200)
@@ -26,6 +27,7 @@ function buildExpectedPayloadForLogEvents(array $logEvents) {
         'columns' => [
             'cid',
             'hostname',
+            'protocol',
             'landingPage',
             'method',
             'statusCode',
@@ -42,6 +44,6 @@ function buildExpectedPayloadForLogEvents(array $logEvents) {
 function assertLandingPagePathsInLogEvents($testCase, array $logEvents, array $landingPagePaths) {
     $testCase->assertEquals(count($logEvents), count($landingPagePaths));
     for ($i = 0, $numLogEvents = count($logEvents); $i < $numLogEvents; ++$i) {
-        $testCase->assertEquals($logEvents[$i]->row()[2], $landingPagePaths[$i]);
+        $testCase->assertEquals($logEvents[$i]->row()[3], $landingPagePaths[$i]);
     }
 }
