@@ -158,19 +158,13 @@ class FileLogBufferTest extends TestCase {
 
     /**
      * @expectedException \LogHero\Client\PermissionDeniedException
-     * @expectedExceptionMessage Permission denied! Cannot write to directory
-     */
-    public function testRaisePermissionDeniedExceptionIfNoWritePermissionsOnLogsDirectory() {
-        $bufferFileLocationNoPermissions = __DIR__ . '/logs-no-permissions/buffer.loghero.io.txt';
-        $logBuffer = new FileLogBuffer($bufferFileLocationNoPermissions, 100, 300, 1000);
-    }
-
-    /**
-     * @expectedException \LogHero\Client\PermissionDeniedException
      * @expectedExceptionMessage Permission denied! Cannot write to file
      */
     public function testRaisePermissionDeniedExceptionIfNoWritePermissionsOnBufferFile() {
         $bufferFileLocationNoPermissions = __DIR__ . '/buffer.loghero.io.no-permissions.txt';
+        chmod($bufferFileLocationNoPermissions, 0700);
+        file_put_contents($bufferFileLocationNoPermissions, 'DATA');
+        chmod($bufferFileLocationNoPermissions, 0444);
         $logBuffer = new FileLogBuffer($bufferFileLocationNoPermissions, 100, 300, 1000);
     }
 
