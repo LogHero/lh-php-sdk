@@ -139,6 +139,7 @@ class FileLogBufferTest extends TestCase {
     public function testVerifyLogBufferConfiguration() {
         new FileLogBuffer($this->bufferFileLocation, 1000, 300, 100);
     }
+
     /**
      * @expectedException \LogHero\Client\BufferSizeExceededException
      * @expectedExceptionMessage Maximum buffer size reached (1000 Bytes)! Pushing further log events is prohibited to avoid running out of disk space
@@ -153,6 +154,24 @@ class FileLogBufferTest extends TestCase {
         $logBuffer->push(createLogEvent('/page-3'));
         clearstatcache();
         $logBuffer->push(createLogEvent('/page-4'));
+    }
+
+    /**
+     * @expectedException \LogHero\Client\PermissionDeniedException
+     * @expectedExceptionMessage Permission denied! Cannot write to directory
+     */
+    public function testRaisePermissionDeniedExceptionIfNoWritePermissionsOnLogsDirectory() {
+        $bufferFileLocationNoPermissions = __DIR__ . '/logs-no-permissions/buffer.loghero.io.txt';
+        $logBuffer = new FileLogBuffer($bufferFileLocationNoPermissions, 100, 300, 1000);
+    }
+
+    /**
+     * @expectedException \LogHero\Client\PermissionDeniedException
+     * @expectedExceptionMessage Permission denied! Cannot write to file
+     */
+    public function testRaisePermissionDeniedExceptionIfNoWritePermissionsOnBufferFile() {
+        $bufferFileLocationNoPermissions = __DIR__ . '/buffer.loghero.io.no-permissions.txt';
+        $logBuffer = new FileLogBuffer($bufferFileLocationNoPermissions, 100, 300, 1000);
     }
 
     public function testHandlesConcurrentAccess() {
