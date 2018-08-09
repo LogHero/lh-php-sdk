@@ -2,6 +2,11 @@
 
 ## Developer Setup
 
+Install PHP:
+```
+sudo dnf install php-cli php-json
+```
+
 Download the composer-setup script https://getcomposer.org/download/ and run:
 
 ```
