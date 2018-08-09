@@ -72,10 +72,6 @@ class LogEvent {
         return $this;
     }
 
-    private static function buildCidFromIPAndUserAgent($ipAddress, $userAgent) {
-        return hash('md5', $ipAddress . $userAgent);
-    }
-
     public function columns() {
         return array(
             'cid',
@@ -87,6 +83,7 @@ class LogEvent {
             'timestamp',
             'pageLoadTime',
             'ip',
+            'ipGroups',
             'ua',
             'referer'
         );
@@ -104,6 +101,7 @@ class LogEvent {
             $this->timestamp->format(\DateTime::ATOM),
             $this->pageLoadTimeMilliSec,
             hash('md5', $this->ipAddress),
+            LogEvent::buildIpRangeHashesFromIp($this->ipAddress),
             $this->userAgent,
             $this->getExternalReferer()
         );
@@ -115,6 +113,18 @@ class LogEvent {
         $this->ensureSet($this->ipAddress, 'Ip address');
         $this->ensureSet($this->hostname, 'Hostname');
         $this->ensureSet($this->timestamp, 'Timestamp');
+    }
+
+    private static function buildCidFromIPAndUserAgent($ipAddress, $userAgent) {
+        return hash('md5', $ipAddress . $userAgent);
+    }
+
+    private static function buildIpRangeHashesFromIp($ipAddress) {
+        $ipComponents = explode('.', $ipAddress);
+        if(count($ipComponents) < 2) {
+            return null;
+        }
+        return hash('md5', $ipComponents[0]) . '.' . hash('md5', $ipComponents[1]);
     }
 
     private static function ensureSet($property, $propertyName) {

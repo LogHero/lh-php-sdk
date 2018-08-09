@@ -34,6 +34,7 @@ function buildExpectedPayloadForLogEvents(array $logEvents) {
             'timestamp',
             'pageLoadTime',
             'ip',
+            'ipGroups',
             'ua',
             'referer'
         ],

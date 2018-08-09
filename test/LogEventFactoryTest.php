@@ -35,6 +35,7 @@ class LogEventFactoryTest extends TestCase {
             '2018-04-11T06:48:18+00:00',
             2389,
             'f528764d624db129b32c21fbca0cb8d6',
+            'ec5decca5ed3d6b8079e2e7e7bacc9f2.cfcd208495d565ef66e7dff9f98764da',
             'Firefox',
             'https://www.loghero.io'
         ]);
@@ -54,6 +55,27 @@ class LogEventFactoryTest extends TestCase {
             '2018-04-11T06:48:20+00:00',
             null,
             'f528764d624db129b32c21fbca0cb8d6',
+            'ec5decca5ed3d6b8079e2e7e7bacc9f2.cfcd208495d565ef66e7dff9f98764da',
+            'Firefox',
+            'https://www.loghero.io'
+        ]);
+    }
+
+    public function testCreateLogEventWithInvalidIp() {
+        $this->setupServerGlobal('/page-url');
+        $_SERVER['REMOTE_ADDR'] = '::';
+        $logEvent = $this->logEventFactory->create();
+        static::assertEquals($logEvent->row(), [
+            'cd56639a5502ce8d383cb156402c849b',
+            'example.org',
+            'http',
+            '/page-url',
+            'POST',
+            301,
+            '2018-04-11T06:48:18+00:00',
+            2389,
+            '4501c091b0366d76ea3218b6cfdd8097',
+            null,
             'Firefox',
             'https://www.loghero.io'
         ]);
@@ -73,6 +95,7 @@ class LogEventFactoryTest extends TestCase {
             '2018-04-11T06:48:18+00:00',
             2389,
             'f528764d624db129b32c21fbca0cb8d6',
+            'ec5decca5ed3d6b8079e2e7e7bacc9f2.cfcd208495d565ef66e7dff9f98764da',
             'Firefox',
             null
         ]);
