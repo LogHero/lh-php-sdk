@@ -16,12 +16,14 @@ class LogHeroErrors {
 
     public function writeError($errorTypeId, $fullError) {
         $errorFilename = $this->getErrorFilename($errorTypeId);
+        FileLogBuffer::verifyWriteAccess($errorFilename);
         file_put_contents($errorFilename, $fullError);
         chmod($errorFilename, 0666);
     }
 
     public function getError($errorTypeId) {
         $errorFilename = $this->getErrorFilename($errorTypeId);
+        FileLogBuffer::verifyWriteAccess($errorFilename);
         if (file_exists($errorFilename)) {
             return fgets(fopen($errorFilename, 'r'));
         }

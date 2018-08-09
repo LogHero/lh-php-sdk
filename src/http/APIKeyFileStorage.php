@@ -11,6 +11,7 @@ class APIKeyFileStorage implements APIKeyStorageInterface {
     }
 
     public function setKey($apiKey) {
+        FileLogBuffer::verifyWriteAccess($this->keyStorageLocation);
         file_put_contents($this->keyStorageLocation, $apiKey, LOCK_EX);
         chmod($this->keyStorageLocation, 0666);
     }
