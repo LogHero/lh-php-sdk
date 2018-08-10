@@ -101,7 +101,7 @@ class LogEvent {
             $this->timestamp->format(\DateTime::ATOM),
             $this->pageLoadTimeMilliSec,
             hash('md5', $this->ipAddress),
-            LogEvent::buildIpRangeHashesFromIp($this->ipAddress),
+            LogEvent::buildIpGroupHashes($this->ipAddress),
             $this->userAgent,
             $this->getExternalReferer()
         );
@@ -119,7 +119,7 @@ class LogEvent {
         return hash('md5', $ipAddress . $userAgent);
     }
 
-    private static function buildIpRangeHashesFromIp($ipAddress) {
+    private static function buildIpGroupHashes($ipAddress) {
         $ipComponents = explode('.', $ipAddress);
         if(count($ipComponents) < 4) {
             return null;
