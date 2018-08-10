@@ -6,11 +6,11 @@ use LogHero\Client\LogEvent;
 
 
 class LogEventTest extends TestCase {
-    private $refererColumnIdx = 10;
+    private $refererColumnIdx = 11;
 
     public function testCreateColumns() {
         $logEvent = $this->createValidLogEvent();
-        $this->assertEquals(count($logEvent->columns()), 11);
+        $this->assertEquals(count($logEvent->columns()), 12);
     }
 
     public function testCreateRowFromLogEventData() {
@@ -25,6 +25,7 @@ class LogEventTest extends TestCase {
             '2018-03-31T15:03:01+00:00',
             150,
             '3ee9e546c0a3811697e424f94ee70bc1',
+            '202cb962ac59075b964b07152d234b70.250cf8b51c773f3f8dc8b4be867a9a02.35f4a8d465e6e1edc05f3d8ab658c551.45c48cce2e2d7fbdea1afc51c7c6ad26',
             'Firefox',
             null
         ]);
@@ -95,6 +96,7 @@ class LogEventTest extends TestCase {
             '2018-03-31T15:03:01+00:00',
             null,
             '3ee9e546c0a3811697e424f94ee70bc1',
+            '202cb962ac59075b964b07152d234b70.250cf8b51c773f3f8dc8b4be867a9a02.35f4a8d465e6e1edc05f3d8ab658c551.45c48cce2e2d7fbdea1afc51c7c6ad26',
             'Firefox',
             null
         ]);
