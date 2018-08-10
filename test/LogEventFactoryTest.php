@@ -8,6 +8,7 @@ use LogHero\Client\LogEventFactory;
 class LogEventFactoryTest extends TestCase {
     private $logEventFactory;
     private $microtimeMock;
+    private $expectedIpGroupHashes = 'ec5decca5ed3d6b8079e2e7e7bacc9f2.cfcd208495d565ef66e7dff9f98764da.cfcd208495d565ef66e7dff9f98764da.c4ca4238a0b923820dcc509a6f75849b';
 
     public function setUp() {
         parent::setUp();
@@ -35,7 +36,7 @@ class LogEventFactoryTest extends TestCase {
             '2018-04-11T06:48:18+00:00',
             2389,
             'f528764d624db129b32c21fbca0cb8d6',
-            'ec5decca5ed3d6b8079e2e7e7bacc9f2.cfcd208495d565ef66e7dff9f98764da',
+            $this->expectedIpGroupHashes,
             'Firefox',
             'https://www.loghero.io'
         ]);
@@ -55,7 +56,7 @@ class LogEventFactoryTest extends TestCase {
             '2018-04-11T06:48:20+00:00',
             null,
             'f528764d624db129b32c21fbca0cb8d6',
-            'ec5decca5ed3d6b8079e2e7e7bacc9f2.cfcd208495d565ef66e7dff9f98764da',
+            $this->expectedIpGroupHashes,
             'Firefox',
             'https://www.loghero.io'
         ]);
@@ -95,7 +96,7 @@ class LogEventFactoryTest extends TestCase {
             '2018-04-11T06:48:18+00:00',
             2389,
             'f528764d624db129b32c21fbca0cb8d6',
-            'ec5decca5ed3d6b8079e2e7e7bacc9f2.cfcd208495d565ef66e7dff9f98764da',
+            $this->expectedIpGroupHashes,
             'Firefox',
             null
         ]);

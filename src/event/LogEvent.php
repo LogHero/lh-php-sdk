@@ -121,10 +121,14 @@ class LogEvent {
 
     private static function buildIpRangeHashesFromIp($ipAddress) {
         $ipComponents = explode('.', $ipAddress);
-        if(count($ipComponents) < 2) {
+        if(count($ipComponents) < 4) {
             return null;
         }
-        return hash('md5', $ipComponents[0]) . '.' . hash('md5', $ipComponents[1]);
+        $ipComponentsHashed = [];
+        foreach($ipComponents as $ipComponent) {
+            $ipComponentsHashed[] = hash('md5', $ipComponent);
+        }
+        return implode('.', $ipComponentsHashed);
     }
 
     private static function ensureSet($property, $propertyName) {
