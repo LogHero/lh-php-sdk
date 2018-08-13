@@ -14,6 +14,7 @@ class LogEventFactory {
         $logEvent = new LogEvent();
         $this
             ->setHostname($logEvent)
+            ->setProtocol($logEvent)
             ->setLandingPagePath($logEvent)
             ->setUserAgent($logEvent)
             ->setIpAddress($logEvent)
@@ -26,6 +27,12 @@ class LogEventFactory {
 
     private function setHostname($logEvent) {
         $logEvent->setHostname($_SERVER['HTTP_HOST']);
+        return $this;
+    }
+
+    private function setProtocol($logEvent) {
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $logEvent->setProtocol($protocol);
         return $this;
     }
 

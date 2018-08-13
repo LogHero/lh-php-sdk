@@ -8,6 +8,7 @@ use LogHero\Client\LogEventFactory;
 class LogEventFactoryTest extends TestCase {
     private $logEventFactory;
     private $microtimeMock;
+    private $expectedIpGroupHashes = 'ec5decca5ed3d6b8079e2e7e7bacc9f2.cfcd208495d565ef66e7dff9f98764da.cfcd208495d565ef66e7dff9f98764da.c4ca4238a0b923820dcc509a6f75849b';
 
     public function setUp() {
         parent::setUp();
@@ -25,15 +26,17 @@ class LogEventFactoryTest extends TestCase {
     public function testCreateLogEvent() {
         $this->setupServerGlobal('/page-url');
         $logEvent = $this->logEventFactory->create();
-        $this->assertEquals($logEvent->row(), [
+        static::assertEquals($logEvent->row(), [
             'd113ff3141723d50fec2933977c89ea6',
             'example.org',
+            'http',
             '/page-url',
             'POST',
             301,
             '2018-04-11T06:48:18+00:00',
             2389,
             'f528764d624db129b32c21fbca0cb8d6',
+            $this->expectedIpGroupHashes,
             'Firefox',
             'https://www.loghero.io'
         ]);
@@ -43,15 +46,37 @@ class LogEventFactoryTest extends TestCase {
         $this->setupServerGlobal('/page-url');
         $_SERVER['REQUEST_TIME_FLOAT'] = null;
         $logEvent = $this->logEventFactory->create();
-        $this->assertEquals($logEvent->row(), [
+        static::assertEquals($logEvent->row(), [
             'd113ff3141723d50fec2933977c89ea6',
             'example.org',
+            'http',
             '/page-url',
             'POST',
             301,
             '2018-04-11T06:48:20+00:00',
             null,
             'f528764d624db129b32c21fbca0cb8d6',
+            $this->expectedIpGroupHashes,
+            'Firefox',
+            'https://www.loghero.io'
+        ]);
+    }
+
+    public function testCreateLogEventWithInvalidIp() {
+        $this->setupServerGlobal('/page-url');
+        $_SERVER['REMOTE_ADDR'] = '::';
+        $logEvent = $this->logEventFactory->create();
+        static::assertEquals($logEvent->row(), [
+            'cd56639a5502ce8d383cb156402c849b',
+            'example.org',
+            'http',
+            '/page-url',
+            'POST',
+            301,
+            '2018-04-11T06:48:18+00:00',
+            2389,
+            '4501c091b0366d76ea3218b6cfdd8097',
+            null,
             'Firefox',
             'https://www.loghero.io'
         ]);
@@ -61,18 +86,29 @@ class LogEventFactoryTest extends TestCase {
         $this->setupServerGlobal('/page-url');
         unset($_SERVER['HTTP_REFERER']);
         $logEvent = $this->logEventFactory->create();
-        $this->assertEquals($logEvent->row(), [
+        static::assertEquals($logEvent->row(), [
             'd113ff3141723d50fec2933977c89ea6',
             'example.org',
+            'http',
             '/page-url',
             'POST',
             301,
             '2018-04-11T06:48:18+00:00',
             2389,
             'f528764d624db129b32c21fbca0cb8d6',
+            $this->expectedIpGroupHashes,
             'Firefox',
             null
         ]);
+    }
+
+    public function testSetHttpsProtocol() {
+        $protocolColumnIdx = 2;
+        $this->setupServerGlobal('/page-url');
+        $_SERVER['HTTPS'] = true;
+        static::assertEquals($this->logEventFactory->create()->row()[$protocolColumnIdx], 'https');
+        $_SERVER['HTTPS'] = 'off';
+        static::assertEquals($this->logEventFactory->create()->row()[$protocolColumnIdx], 'http');
     }
     
     private function setupServerGlobal($pageUrl) {
@@ -83,6 +119,7 @@ class LogEventFactoryTest extends TestCase {
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
         $_SERVER['HTTP_REFERER'] = 'https://www.loghero.io';
         $_SERVER['HTTP_HOST'] = 'example.org';
+        unset($_SERVER['HTTPS']);
         http_response_code(301);
     }
 }

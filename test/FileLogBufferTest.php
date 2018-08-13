@@ -41,6 +41,7 @@ class FileLogBufferTest extends TestCase {
     private $bufferFileLocation = __DIR__ . '/buffer.loghero.io.txt';
     private $lastDumpTimestampFileLocation = __DIR__ . '/buffer.loghero.io.last-dump.timestamp';
     private $dumpedLogEventsResultFile = __DIR__ . '/buffer-dumped.loghero.io.txt';
+    private $bufferFileLocationNoPermissions = __DIR__ . '/buffer.loghero.io.no-permissions.txt';
     private $logBuffer;
     private $microtimeMock;
 
@@ -51,6 +52,9 @@ class FileLogBufferTest extends TestCase {
         $this->microtimeMock->enable();
         $flushBufferFileSizeInBytes = 1000;
         $this->logBuffer = new FileLogBuffer($this->bufferFileLocation, $flushBufferFileSizeInBytes);
+        file_put_contents($this->bufferFileLocationNoPermissions, 'DATA');
+        chmod($this->bufferFileLocationNoPermissions, 0400);
+        clearstatcache();
     }
 
     public function tearDown() {
@@ -64,6 +68,8 @@ class FileLogBufferTest extends TestCase {
         if(file_exists($this->dumpedLogEventsResultFile)) {
             unlink($this->dumpedLogEventsResultFile);
         }
+        chmod($this->bufferFileLocationNoPermissions, 0700);
+        unlink($this->bufferFileLocationNoPermissions);
         $this->microtimeMock->disable();
     }
 
@@ -139,6 +145,7 @@ class FileLogBufferTest extends TestCase {
     public function testVerifyLogBufferConfiguration() {
         new FileLogBuffer($this->bufferFileLocation, 1000, 300, 100);
     }
+
     /**
      * @expectedException \LogHero\Client\BufferSizeExceededException
      * @expectedExceptionMessage Maximum buffer size reached (1000 Bytes)! Pushing further log events is prohibited to avoid running out of disk space
@@ -153,6 +160,14 @@ class FileLogBufferTest extends TestCase {
         $logBuffer->push(createLogEvent('/page-3'));
         clearstatcache();
         $logBuffer->push(createLogEvent('/page-4'));
+    }
+
+    /**
+     * @expectedException \LogHero\Client\PermissionDeniedException
+     * @expectedExceptionMessage Permission denied! Cannot write to file
+     */
+    public function testRaisePermissionDeniedExceptionIfNoWritePermissionsOnBufferFile() {
+        $logBuffer = new FileLogBuffer($this->bufferFileLocationNoPermissions, 100, 300, 1000);
     }
 
     public function testHandlesConcurrentAccess() {

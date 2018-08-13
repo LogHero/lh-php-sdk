@@ -22,6 +22,7 @@ class FileLogBuffer implements LogBufferInterface {
             );
         }
         $this->fileLocation = $bufferFileName;
+        static::verifyWriteAccess($this->fileLocation);
         $this->maxDumpTimeIntervalSeconds = $maxDumpTimeIntervalSeconds;
         $this->lastDumpTimestampFileLocation = str_replace('.txt', '', $bufferFileName) . '.last-dump.timestamp';
         $this->flushBufferFileSizeInBytes = $flushBufferFileSizeInBytes;
@@ -72,6 +73,16 @@ class FileLogBuffer implements LogBufferInterface {
         }
         fclose($fp);
         return $logEvents;
+    }
+
+    public static function verifyWriteAccess($fileLocation) {
+        $directoryName = dirname($fileLocation);
+        if (!is_writable($directoryName)) {
+            throw new PermissionDeniedException('Permission denied! Cannot write to directory ' . $directoryName);
+        }
+        if (file_exists($fileLocation) && !is_writable($fileLocation)) {
+            throw new PermissionDeniedException('Permission denied! Cannot write to file ' . $fileLocation);
+        }
     }
 
     private function sizeInBytes() {
