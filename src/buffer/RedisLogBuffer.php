@@ -10,11 +10,11 @@ class RedisLogBuffer implements LogBufferInterface {
     private $numberOfEventsInBuffer;
     private $maxNumberOfEventsInBuffer;
 
-    public function __construct($redisClient, $redisOptions) {
+    public function __construct($redisClient, $redisOptions, $maxNumberOfEventsInBuffer=500) {
         $this->redisClient = $redisClient;
         $this->redisLogBufferKey = $redisOptions->getRedisKeyPrefix() .':logs';
         $this->numberOfEventsInBuffer = 0;
-        $this->maxNumberOfEventsInBuffer = 5;
+        $this->maxNumberOfEventsInBuffer = $maxNumberOfEventsInBuffer;
     }
 
     public function push($logEvent) {
