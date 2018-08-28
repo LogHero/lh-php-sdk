@@ -1,6 +1,7 @@
 <?php
 namespace LogHero\Client;
 
+use LogHero\Client\RedisOptions;
 use Predis\Client;
 
 
@@ -10,10 +11,9 @@ class RedisLogBuffer implements LogBufferInterface {
     private $numberOfEventsInBuffer;
     private $maxNumberOfEventsInBuffer;
 
-    public function __construct(
-    ) {
-        $this->redisClient = new \Predis\Client('redis://192.168.99.100:6379');
-        $this->redisLogBufferKey = 'loghero:logs';
+    public function __construct($redisOptions) {
+        $this->redisClient = new \Predis\Client($redisOptions->getRedisUrl());
+        $this->redisLogBufferKey = $redisOptions->getRedisKeyPrefix() .':logs';
         $this->numberOfEventsInBuffer = 0;
         $this->maxNumberOfEventsInBuffer = 5;
     }

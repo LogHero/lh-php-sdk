@@ -16,7 +16,7 @@ class RedisOptions {
         return $this->redisUrl;
     }
 
-    public function getRedisKeyPredix() {
+    public function getRedisKeyPrefix() {
         return $this->redisKeyPrefix;
     }
 
