@@ -5,6 +5,7 @@ use PHPUnit\Framework\TestCase;
 use LogHero\Client\MemLogBuffer;
 use LogHero\Client\APIAccess;
 use LogHero\Client\LogTransport;
+use LogHero\Client\DisabledLogTransport;
 
 
 class LogTransportTest extends TestCase {
@@ -89,6 +90,15 @@ class LogTransportTest extends TestCase {
             ->expects(static::never())
             ->method('submitLogPackage');
         $this->logTransport->flush();
+    }
+
+    public function testNoSubmitIfFlushDisabled() {
+        $logTransport = new DisabledLogTransport($this->logBuffer, $this->apiAccessStub);
+        $this->logBuffer->push(createLogEvent('/page-1'));
+        $this->apiAccessStub
+            ->expects(static::never())
+            ->method('submitLogPackage');
+        $logTransport->flush();
     }
 
 }
