@@ -1,8 +1,6 @@
 <?php
 namespace LogHero\Client\Test;
 
-use LogHero\Client\APIKeyMemStorage;
-use LogHero\Client\APIKeyStorageInterface;
 use LogHero\Client\APISettingsInterface;
 use PHPUnit\Framework\TestCase;
 use LogHero\Client\CurlClient;
@@ -10,9 +8,18 @@ use LogHero\Client\APIAccess;
 
 
 class APISettingsTest implements APISettingsInterface {
+    private $apiKey;
 
-    public function getAPILogPackageEndpoint() {
+    public function __construct($apiKey) {
+        $this->apiKey = $apiKey;
+    }
+
+    public function getLogPackageEndpoint() {
         return 'https://test.loghero.io/logs/';
+    }
+
+    public function getKey() {
+        return $this->apiKey;
     }
 }
 
@@ -20,8 +27,8 @@ class APISettingsTest implements APISettingsInterface {
 class APIAccessForTesting extends APIAccess {
     private $curlClientMock;
 
-    public function __construct(APIKeyStorageInterface $apiKeyStorage, $clientId, APISettingsInterface $apiSettings, $curlClientMock) {
-        parent::__construct($apiKeyStorage, $clientId, $apiSettings);
+    public function __construct($clientId, APISettingsInterface $apiSettings, $curlClientMock) {
+        parent::__construct($clientId, $apiSettings);
         $this->curlClientMock = $curlClientMock;
     }
 
@@ -34,19 +41,15 @@ class APIAccessForTesting extends APIAccess {
 class APIAccessTest extends TestCase {
     private $curlClientMock;
     private $apiKey = 'LH-1234';
-    private $apiKeyStorage;
     private $clientId = 'Test Client';
     private $apiSettings;
     private $apiAccess;
     private $expectedUserAgent;
 
     public function setUp() {
-        $this->apiKeyStorage = new APIKeyMemStorage();
-        $this->apiKeyStorage->setKey($this->apiKey);
-        $this->apiSettings = new APISettingsTest();
+        $this->apiSettings = new APISettingsTest($this->apiKey);
         $this->curlClientMock = $this->createMock(CurlClient::class);
         $this->apiAccess = new APIAccessForTesting(
-            $this->apiKeyStorage,
             $this->clientId,
             $this->apiSettings,
             $this->curlClientMock
@@ -89,9 +92,8 @@ class APIAccessTest extends TestCase {
 
     public function testNoPostIfApiKeyInvalid() {
         $this->apiAccess = new APIAccessForTesting(
-            new APIKeyMemStorage(),
             $this->clientId,
-            $this->apiSettings,
+            new APISettingsTest(null),
             $this->curlClientMock
         );
         $this->curlClientMock

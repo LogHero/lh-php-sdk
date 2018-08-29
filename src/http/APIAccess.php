@@ -5,12 +5,12 @@ namespace LogHero\Client;
 class APIAccess extends APIAccessBase {
 
     protected function send($payloadAsJson) {
-        $apiLogPackageEndpoint = $this->getApiSettings()->getAPILogPackageEndpoint();
+        $apiLogPackageEndpoint = $this->getApiSettings()->getLogPackageEndpoint();
         $curlClient = $this->createCurlClient($apiLogPackageEndpoint);
         $curlClient->setOpt(CURLOPT_HTTPHEADER, array(
             'Content-type: application/json',
             'Content-encoding: deflate',
-            'Authorization: '.$this->getApiKeyStorage()->getKey(),
+            'Authorization: '.$this->getApiSettings()->getKey(),
             'User-Agent: '.$this->getUserAgent()
         ));
         $curlClient->setOpt(CURLOPT_CUSTOMREQUEST, 'PUT');

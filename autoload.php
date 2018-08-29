@@ -13,11 +13,9 @@ spl_autoload_register(
                 'loghero\\client\\apiaccessbase' => '/src/http/APIAccessBase.php',
                 'loghero\\client\\apisettingsinterface' => '/src/http/APISettingsInterface.php',
                 'loghero\\client\\apisettingsdefault' => '/src/http/APISettingsDefault.php',
+                'loghero\\client\\apisettings' => '/src/http/APISettings.php',
                 'loghero\\client\\apiaccessexception' => '/src/http/APIAccessException.php',
                 'loghero\\client\\apiaccessinterface' => '/src/http/APIAccessInterface.php',
-                'loghero\\client\\apikeystorageinterface' => '/src/http/APIKeyStorageInterface.php',
-                'loghero\\client\\apikeyfilestorage' => '/src/http/APIKeyFileStorage.php',
-                'loghero\\client\\apikeymemstorage' => '/src/http/APIKeyMemStorage.php',
                 'loghero\\client\\apikeyundefinedexception' => '/src/http/APIKeyUndefinedException.php',
                 'loghero\\client\\asynclogtransport' => '/src/transport/AsyncLogTransport.php',
                 'loghero\\client\\curlclient' => '/src/http/CurlClient.php',
@@ -37,6 +35,8 @@ spl_autoload_register(
                 'loghero\\client\\memlogbuffer' => '/src/buffer/MemLogBuffer.php',
                 'loghero\\client\\logheroerrors' => '/src/error/LogHeroErrors.php',
                 'loghero\\client\\permissiondeniedexception' => '/src/error/PermissionDeniedException.php',
+                'loghero\\client\\storageinterface' => '/src/util/StorageInterface.php',
+                'loghero\\client\\filestorage' => '/src/util/FileStorage.php',
             );
         }
         $cn = strtolower($class);
