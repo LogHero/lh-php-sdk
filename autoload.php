@@ -18,6 +18,7 @@ spl_autoload_register(
                 'loghero\\client\\apiaccessinterface' => '/src/http/APIAccessInterface.php',
                 'loghero\\client\\apikeyundefinedexception' => '/src/http/APIKeyUndefinedException.php',
                 'loghero\\client\\asynclogtransport' => '/src/transport/AsyncLogTransport.php',
+                'loghero\\client\\disabledlogtransport' => '/src/transport/DisabledLogTransport.php',
                 'loghero\\client\\curlclient' => '/src/http/CurlClient.php',
                 'loghero\\client\\debuglogevent' => '/src/event/DebugLogEvent.php',
                 'loghero\\client\\filelogbuffer' => '/src/buffer/FileLogBuffer.php',
