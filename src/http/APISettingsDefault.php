@@ -2,9 +2,9 @@
 namespace LogHero\Client;
 
 
-class APISettingsDefault implements APISettingsInterface {
+abstract class APISettingsDefault implements APISettingsInterface {
 
-    public function getAPILogPackageEndpoint() {
+    public function getLogPackageEndpoint() {
         return 'https://api.loghero.io/logs/';
     }
 }

@@ -3,5 +3,6 @@ namespace LogHero\Client;
 
 
 interface APISettingsInterface {
-    public function getAPILogPackageEndpoint();
+    public function getKey();
+    public function getLogPackageEndpoint();
 }
