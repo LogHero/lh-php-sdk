@@ -37,6 +37,8 @@ spl_autoload_register(
                 'loghero\\client\\memlogbuffer' => '/src/buffer/MemLogBuffer.php',
                 'loghero\\client\\logheroerrors' => '/src/error/LogHeroErrors.php',
                 'loghero\\client\\permissiondeniedexception' => '/src/error/PermissionDeniedException.php',
+                'loghero\\client\\storageinterface' => '/src/util/StorageInterface.php',
+                'loghero\\client\\filestorage' => '/src/util/FileStorage.php',
             );
         }
         $cn = strtolower($class);
