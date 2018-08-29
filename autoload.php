@@ -1,6 +1,9 @@
 <?php
 
 
+require 'vendor/predis/predis/autoload.php';
+
+
 spl_autoload_register(
     function($class) {
         static $classes = null;
@@ -20,6 +23,8 @@ spl_autoload_register(
                 'loghero\\client\\curlclient' => '/src/http/CurlClient.php',
                 'loghero\\client\\debuglogevent' => '/src/event/DebugLogEvent.php',
                 'loghero\\client\\filelogbuffer' => '/src/buffer/FileLogBuffer.php',
+                'loghero\\client\\redislogbuffer' => '/src/buffer/RedisLogBuffer.php',
+                'loghero\\client\\redisoptions' => '/src/buffer/RedisOptions.php',
                 'loghero\\client\\invalidlogeventexception' => '/src/event/InvalidLogEventException.php',
                 'loghero\\client\\logbufferinterface' => '/src/buffer/LogBufferInterface.php',
                 'loghero\\client\\buffersizeexceededexception' => '/src/buffer/BufferSizeExceededException.php',
