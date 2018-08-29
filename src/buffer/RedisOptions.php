@@ -5,11 +5,10 @@ namespace LogHero\Client;
 class RedisOptions {
     private $redisUrl;
     private $redisKeyPrefix;
-    public static $defaultRedisKeyPredix = 'io:loghero:wp';
 
-    public function __construct($redisUrl, $redisKeyPrefix = null) {
+    public function __construct($redisUrl, $redisKeyPrefix) {
         $this->redisUrl = $redisUrl;
-        $this->redisKeyPrefix = $redisKeyPrefix ? $redisKeyPrefix : static::$defaultRedisKeyPredix;
+        $this->redisKeyPrefix = $redisKeyPrefix;
     }
 
     public function getRedisUrl() {
