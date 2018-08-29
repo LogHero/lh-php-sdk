@@ -8,35 +8,48 @@ class RedisLogBuffer implements LogBufferInterface {
     private $redisLastDumpBufferKey;
     private $numberOfEventsInBuffer;
     private $lastDumpTimestamp;
-    private $maxNumberOfEventsInBuffer;
+    private $maxEventsInBufferForFlush;
     private $maxDumpTimeIntervalSeconds;
+    private $maxEventsInBufferForTrim;
 
     public function __construct(
         $redisClient,
         $redisOptions,
-        $maxNumberOfEventsInBuffer=1000,
-        $maxDumpTimeIntervalSeconds=300
+        $maxEventsInBufferForFlush=1000,
+        $maxDumpTimeIntervalSeconds=300,
+        $maxEventsInBufferForTrim=1000000
     ) {
+        if ($maxEventsInBufferForTrim <= $maxEventsInBufferForFlush) {
+            throw new \Exception(
+                'Inconsistent configuration: $maxEventsInBufferForTrim is smaller than $maxEventsInBufferForFlush: '
+                . $maxEventsInBufferForTrim . ' <= ' . $maxEventsInBufferForFlush
+            );
+        }
         $this->redisClient = $redisClient;
         $this->redisLogBufferKey = $redisOptions->getRedisKeyPrefix() . ':logs';
         $this->redisLastDumpBufferKey = $this->redisLogBufferKey . ':last-dump';
         $this->numberOfEventsInBuffer = 0;
-        $this->maxNumberOfEventsInBuffer = $maxNumberOfEventsInBuffer;
+        $this->maxEventsInBufferForFlush = $maxEventsInBufferForFlush;
         $this->maxDumpTimeIntervalSeconds = $maxDumpTimeIntervalSeconds;
+        $this->maxEventsInBufferForTrim = $maxEventsInBufferForTrim;
     }
 
     public function push($logEvent) {
         $responses = $this->redisClient
             ->transaction()
-            ->lpush($this->redisLogBufferKey, serialize($logEvent))
+            ->rpush($this->redisLogBufferKey, serialize($logEvent))
             ->get($this->redisLastDumpBufferKey)
             ->execute();
         $this->numberOfEventsInBuffer = $responses[0];
         $this->lastDumpTimestamp = (float) $responses[1];
+        if ($this->numberOfEventsInBuffer > $this->maxEventsInBufferForTrim) {
+            $numberOfElementsToTrim = $this->numberOfEventsInBuffer - $this->maxEventsInBufferForTrim;
+            $this->redisClient->ltrim($this->redisLogBufferKey, $numberOfElementsToTrim, -1);
+        }
     }
 
     public function needsDumping() {
-        if($this->numberOfEventsInBuffer >= $this->maxNumberOfEventsInBuffer) {
+        if($this->numberOfEventsInBuffer >= $this->maxEventsInBufferForFlush) {
             return true;
         }
         if ($this->lastDumpTimestamp === null) {

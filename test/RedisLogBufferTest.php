@@ -7,7 +7,8 @@ use PHPUnit\Framework\TestCase;
 
 
 interface RedisClientMockInterface {
-    public function lpush($key, $data);
+    public function rpush($key, $data);
+    public function ltrim($key, $start, $stop);
     public function set($key, $data);
     public function transaction();
     public function lrange($key, $start, $stop);
@@ -21,8 +22,9 @@ interface RedisClientMockInterface {
 class RedisLogBufferTest extends TestCase {
     private $logBuffer;
     private $redisClientMock;
-    private $maxNumberOfEventsInBuffer = 3;
+    private $maxEventsInBufferForFlush = 3;
     private $maxDumpTimeIntervalSeconds = 4;
+    private $maxEventsInBufferForTrim = 5;
     private $microtimeMock;
     private static $currentTime = 1523429300.8000;
 
@@ -36,8 +38,9 @@ class RedisLogBufferTest extends TestCase {
         $this->logBuffer = new RedisLogBuffer(
             $this->redisClientMock,
             $redisOptions,
-            $this->maxNumberOfEventsInBuffer,
-            $this->maxDumpTimeIntervalSeconds
+            $this->maxEventsInBufferForFlush,
+            $this->maxDumpTimeIntervalSeconds,
+            $this->maxEventsInBufferForTrim
         );
     }
 
@@ -118,6 +121,32 @@ class RedisLogBufferTest extends TestCase {
         static::assertEquals('/page-2', $logEvents[1]->row()[3]);
     }
 
+    public function testDeleteFirstNElementsIfLimitIsReached() {
+        $elementsOverLimit = 4;
+        $numberOfElementsInBuffer = $this->maxEventsInBufferForTrim + $elementsOverLimit;
+        $logEvent = createLogEvent('/page');
+        $this->expectPush($logEvent, $numberOfElementsInBuffer, null);
+        $this->redisClientMock
+            ->expects($this->once())
+            ->method('ltrim')
+            ->with($this->equalTo('key-prefix:logs'), $this->equalTo($elementsOverLimit), $this->equalTo(-1));
+        $this->logBuffer->push($logEvent);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Inconsistent configuration: $maxEventsInBufferForTrim is smaller than $maxEventsInBufferForFlush: 5 <= 100
+     */
+    public function testVerifyLogBufferConfiguration() {
+        new RedisLogBuffer(
+            $this->redisClientMock,
+            new RedisOptions('REDIS_URL', 'key-prefix'),
+            100,
+            $this->maxDumpTimeIntervalSeconds,
+            5
+        );
+    }
+
     private function expectPush($logEvent, $lpushReturnValue, $lastDumpTimestamp) {
         if ($lastDumpTimestamp) {
             $lastDumpTimestamp = (string) $lastDumpTimestamp;
@@ -128,7 +157,7 @@ class RedisLogBufferTest extends TestCase {
             ->willReturn($this->redisClientMock);
         $this->redisClientMock
             ->expects($this->once())
-            ->method('lpush')
+            ->method('rpush')
             ->with($this->equalTo('key-prefix:logs'), $this->equalTo(serialize($logEvent)))
             ->willReturn($this->redisClientMock);
         $this->redisClientMock
