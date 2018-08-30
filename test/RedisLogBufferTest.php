@@ -9,6 +9,7 @@ use PHPUnit\Framework\TestCase;
 interface RedisClientMockInterface {
     public function rpush($key, $data);
     public function ltrim($key, $start, $stop);
+    public function llen($key);
     public function set($key, $data);
     public function transaction();
     public function lrange($key, $start, $stop);
@@ -18,7 +19,6 @@ interface RedisClientMockInterface {
 }
 
 
-# TODO ERROR HANDLING!!
 class RedisLogBufferTest extends TestCase {
     private $logBuffer;
     private $redisClientMock;
@@ -82,6 +82,16 @@ class RedisLogBufferTest extends TestCase {
         $this->expectPush($logEvent, 1, $nowMinus5Seconds);
         $this->logBuffer->push($logEvent);
         static::assertTrue($this->logBuffer->needsDumping());
+    }
+
+    public function testNeedsDumpingRequestsBufferSizeIfNotAvailable() {
+        $this->expectNeedsDumpQuery(4, static::$currentTime);
+        static::assertTrue($this->logBuffer->needsDumping());
+    }
+
+    public function testNeedsDumpingRequestsTimestampIfNotAvailable() {
+        $this->expectNeedsDumpQuery(2, static::$currentTime);
+        static::assertFalse($this->logBuffer->needsDumping());
     }
 
     public function testDumpReturnsLogEventsAndClearsBuffer() {
@@ -167,6 +177,34 @@ class RedisLogBufferTest extends TestCase {
             ->willReturn($this->redisClientMock);
         $responses = array(
             $lpushReturnValue,
+            $lastDumpTimestamp
+        );
+        $this->redisClientMock
+            ->expects($this->once())
+            ->method('execute')
+            ->willReturn($responses);
+    }
+
+    private function expectNeedsDumpQuery($llenReturnValue, $lastDumpTimestamp) {
+        if ($lastDumpTimestamp) {
+            $lastDumpTimestamp = (string) $lastDumpTimestamp;
+        }
+        $this->redisClientMock
+            ->expects($this->once())
+            ->method('transaction')
+            ->willReturn($this->redisClientMock);
+        $this->redisClientMock
+            ->expects($this->once())
+            ->method('llen')
+            ->with($this->equalTo('key-prefix:logs'))
+            ->willReturn($this->redisClientMock);
+        $this->redisClientMock
+            ->expects($this->once())
+            ->method('get')
+            ->with($this->equalTo('key-prefix:logs:last-dump'))
+            ->willReturn($this->redisClientMock);
+        $responses = array(
+            $llenReturnValue,
             $lastDumpTimestamp
         );
         $this->redisClientMock

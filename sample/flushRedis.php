@@ -24,4 +24,6 @@ $logBuffer = new RedisLogBuffer($redisClient, $redisOptions);
 $apiAccess = new APIAccess($clientId, $apiSettings);
 $logTransport = new LogTransport($logBuffer, $apiAccess);
 
-$logTransport->flush();
+if ($logBuffer->needsDumping()) {
+    $logTransport->flush();
+}

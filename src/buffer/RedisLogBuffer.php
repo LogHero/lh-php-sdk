@@ -28,7 +28,6 @@ class RedisLogBuffer implements LogBufferInterface {
         $this->redisClient = $redisClient;
         $this->redisLogBufferKey = $redisOptions->getRedisKeyPrefix() . ':logs';
         $this->redisLastDumpBufferKey = $this->redisLogBufferKey . ':last-dump';
-        $this->numberOfEventsInBuffer = 0;
         $this->maxEventsInBufferForFlush = $maxEventsInBufferForFlush;
         $this->maxDumpTimeIntervalSeconds = $maxDumpTimeIntervalSeconds;
         $this->maxEventsInBufferForTrim = $maxEventsInBufferForTrim;
@@ -49,6 +48,9 @@ class RedisLogBuffer implements LogBufferInterface {
     }
 
     public function needsDumping() {
+        if ($this->numberOfEventsInBuffer === null) {
+            $this->refreshDumpStatus();
+        }
         if($this->numberOfEventsInBuffer >= $this->maxEventsInBufferForFlush) {
             return true;
         }
@@ -74,5 +76,15 @@ class RedisLogBuffer implements LogBufferInterface {
             $logEventsUnserialized[] = unserialize($logEvent);
         }
         return $logEventsUnserialized;
+    }
+
+    private function refreshDumpStatus() {
+        $responses = $this->redisClient
+            ->transaction()
+            ->llen($this->redisLogBufferKey)
+            ->get($this->redisLastDumpBufferKey)
+            ->execute();
+        $this->numberOfEventsInBuffer = $responses[0];
+        $this->lastDumpTimestamp = (float) $responses[1];
     }
 }
