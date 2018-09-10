@@ -14,7 +14,7 @@ class RedisLogBuffer implements LogBufferInterface {
 
     public function __construct(
         $redisClient,
-        $redisOptions,
+        RedisOptions $redisOptions,
         $maxEventsInBufferForFlush=1000,
         $maxDumpTimeIntervalSeconds=300,
         $maxEventsInBufferForTrim=1000000
