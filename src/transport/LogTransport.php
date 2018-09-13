@@ -2,20 +2,12 @@
 namespace LogHero\Client;
 
 
-class LogTransport implements LogTransportInterface {
-    protected $logBuffer;
+class LogTransport extends DisabledLogTransport  {
     protected $apiAccess;
 
     public function __construct(LogBufferInterface $logBuffer, APIAccessInterface $apiAccess) {
-        $this->logBuffer = $logBuffer;
+        parent::__construct($logBuffer);
         $this->apiAccess = $apiAccess;
-    }
-
-    public function submit($logEvent) {
-        $this->logBuffer->push($logEvent);
-        if ($this->logBuffer->needsDumping()) {
-            $this->flush();
-        }
     }
 
     public function flush() {
