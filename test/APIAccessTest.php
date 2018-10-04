@@ -2,24 +2,16 @@
 namespace LogHero\Client\Test;
 
 use LogHero\Client\APISettingsInterface;
+use LogHero\Client\APISettings;
 use PHPUnit\Framework\TestCase;
 use LogHero\Client\CurlClient;
 use LogHero\Client\APIAccess;
 
 
-class APISettingsTest implements APISettingsInterface {
-    private $apiKey;
-
-    public function __construct($apiKey) {
-        $this->apiKey = $apiKey;
-    }
+class APISettingsTest extends APISettings {
 
     public function getLogPackageEndpoint() {
         return 'https://test.loghero.io/logs/';
-    }
-
-    public function getKey() {
-        return $this->apiKey;
     }
 }
 
