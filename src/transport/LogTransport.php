@@ -12,7 +12,7 @@ class LogTransport extends DisabledLogTransport  {
 
     public function flush() {
         $payload = $this->buildPayload($this->logBuffer->dump());
-        if ($payload['columns'] === null or count($payload['rows']) === 0) {
+        if ($payload['columns'] === null || count($payload['rows']) === 0) {
             return;
         }
         $this->send($payload);
