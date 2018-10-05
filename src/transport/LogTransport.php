@@ -9,7 +9,7 @@ class LogTransport extends DisabledLogTransport  {
     public function __construct(
         LogBufferInterface $logBuffer,
         APIAccessInterface $apiAccess,
-        $maxLogEventsPerBatch=2500
+        $maxLogEventsPerBatch=1000
     ) {
         parent::__construct($logBuffer);
         $this->apiAccess = $apiAccess;
