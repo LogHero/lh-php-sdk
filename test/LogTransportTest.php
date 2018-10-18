@@ -66,6 +66,34 @@ class LogTransportTest extends TestCase {
         }
     }
 
+    public function testSubmitLogEventsInBatches() {
+        $logTransport = new LogTransport($this->logBuffer, $this->apiAccessStub, 3);
+        $this->apiAccessStub
+            ->expects(static::exactly(2))
+            ->method('submitLogPackage');
+        $batch1 = buildExpectedPayloadForLogEvents(array(
+            createLogEvent('/page-1'),
+            createLogEvent('/page-2'),
+            createLogEvent('/page-3')
+        ));
+        $batch2 = buildExpectedPayloadForLogEvents(array(
+            createLogEvent('/page-4'),
+            createLogEvent('/page-5')
+        ));
+        $this->apiAccessStub
+            ->expects($this->at(0))
+            ->method('submitLogPackage')
+            ->with($this->equalTo($batch1));
+        $this->apiAccessStub
+            ->expects($this->at(1))
+            ->method('submitLogPackage')
+            ->with($this->equalTo($batch2));
+        for ($x = 0; $x < 5; ++$x) {
+            $this->logBuffer->push(createLogEvent('/page-'.($x+1)));
+        }
+        $logTransport->flush();
+    }
+
     public function testSkipInvalidLogEvents() {
         $this->logBuffer->push(createLogEvent('/page-1'));
         $invalidLogEvent = createLogEvent('/page-2');
