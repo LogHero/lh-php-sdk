@@ -120,10 +120,7 @@ class LogEvent {
     }
 
     private static function buildIpGroupHashes($ipAddress) {
-        $splitChar = '.';
-        if (filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
-            $splitChar = ':';
-        }
+        $splitChar = filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? ':' : '.';
         $ipComponents = explode($splitChar, $ipAddress);
         if(count($ipComponents) < 4) {
             return null;
