@@ -1,6 +1,6 @@
 {
     "name": "loghero/sdk",
-    "version": "0.6.1",
+    "version": "0.6.2",
     "type": "library",
     "description": "The official PHP client SDK for log-hero.com",
     "homepage": "https://log-hero.com/",

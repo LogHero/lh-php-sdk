@@ -8,7 +8,7 @@ abstract class APIAccessBase implements APIAccessInterface {
 
     public function __construct($clientId, APISettingsInterface $apiSettings) {
         $this->apiSettings = $apiSettings;
-        $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.6.1';
+        $this->userAgent = $clientId . '; PHP SDK loghero/sdk@0.6.2';
     }
 
     public function submitLogPackage($payloadAsJson) {
