@@ -11,7 +11,7 @@ class LogEventFactory {
     );
 
     public function create() {
-        $logEvent = new LogEvent();
+        $logEvent = new DebugLogEvent();
         $this
             ->setHostname($logEvent)
             ->setProtocol($logEvent)
