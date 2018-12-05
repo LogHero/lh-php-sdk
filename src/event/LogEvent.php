@@ -120,7 +120,8 @@ class LogEvent {
     }
 
     private static function buildIpGroupHashes($ipAddress) {
-        $ipComponents = explode('.', $ipAddress);
+        $splitChar = filter_var($ipAddress, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? ':' : '.';
+        $ipComponents = explode($splitChar, $ipAddress);
         if(count($ipComponents) < 4) {
             return null;
         }
@@ -128,7 +129,7 @@ class LogEvent {
         foreach($ipComponents as $ipComponent) {
             $ipComponentsHashed[] = hash('md5', $ipComponent);
         }
-        return implode('.', $ipComponentsHashed);
+        return implode($splitChar, $ipComponentsHashed);
     }
 
     private static function ensureSet($property, $propertyName) {
