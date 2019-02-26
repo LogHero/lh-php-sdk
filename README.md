@@ -22,7 +22,7 @@ composer install
 
 ## Starting VM with Sample Page
 
-Install [VirtualBox](https://www.virtualbox.org/), [Vagrant](https://www.vagrantup.com/) and [Ansible](http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
+Install [Composer](https://getcomposer.org/doc/00-intro.md#locally), [VirtualBox](https://www.virtualbox.org/), [Vagrant](https://www.vagrantup.com/) and [Ansible](http://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).
 Checkout the repository, install the dependencies with composer and start the virtual machine:
 ```
 git clone git@github.com:LogHero/lh-php-sdk.git
