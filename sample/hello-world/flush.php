@@ -1,5 +1,8 @@
 <?php
 
+// This file is only necessary for asynchronous flushing (AsyncLogTransport).
+// It collects the log events from the buffer and sends them as one batch to the LogHero API.
+
 
 // Make sure that we quickly respond to client and close the session before the actual flushing is started
 ignore_user_abort( true );
