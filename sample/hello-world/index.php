@@ -22,7 +22,7 @@
   $apiKey = 'YOUR_API_KEY';
   $apiSettings = new APISettings($apiKey);
 
-  // Client ID, choose an appropriate name (e.g. <your-company>-loghero-client)
+  // Client ID, choose an appropriate name (e.g. <your-company>-loghero-client).
   $clientId = 'Hello-World-Sample';
 
   // Endpoint used for flushing. For more information see async log transport below.
