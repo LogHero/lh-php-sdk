@@ -1,0 +1,31 @@
+- hosts: all
+  become: yes
+  gather_facts: False
+  roles:
+    - franklinkim.apache2
+  vars:
+    apache2_modules:
+      - { id: php7.0, state: present }
+    apache2_remove_default: yes
+    apache2_sites:
+      - id: default
+        state: present
+        name: default.local
+        add_webroot: yes
+  pre_tasks:
+    - name: Install Python for Ansible
+      raw: test -e /usr/bin/python || (apt-get -y update && apt-get install -y python-minimal)
+      changed_when: False
+    - setup: # aka gather_facts
+    - name: Update repositories cache and install PHP
+      apt:
+        name:
+          - php
+          - php-cli
+          - php-mbstring
+          - php-xml
+          - php-curl
+          - libapache2-mod-php
+          - php-mysql
+          - phpunit
+        update_cache: yes

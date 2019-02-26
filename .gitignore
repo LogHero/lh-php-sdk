@@ -1,4 +1,5 @@
 .idea/
+.vagrant/
 *.iml
 *.lock
 vendor/
