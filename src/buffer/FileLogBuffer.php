@@ -66,7 +66,9 @@ class FileLogBuffer implements LogBufferInterface {
             file_put_contents ($this->lastDumpTimestampFileLocation, 'loghero.io');
             chmod($this->lastDumpTimestampFileLocation, 0666);
             while (($logEventLine = fgets($fp)) !== false) {
-                $logEvents[] = unserialize($logEventLine);
+                # fgets() keeps the trailing newline. PHP 8 warns about the extra byte
+                # on every single dump, where PHP 5 and 7 accepted it silently.
+                $logEvents[] = unserialize(rtrim($logEventLine, "\r\n"));
             }
             ftruncate($fp, 0);
             flock($fp, LOCK_UN);
