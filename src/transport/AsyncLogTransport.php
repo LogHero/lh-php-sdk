@@ -34,7 +34,7 @@ class AsyncLogTransport extends LogTransport {
         parent::flush();
     }
 
-    private function triggerAsyncFlush() {
+    protected function triggerAsyncFlush() {
         $curlClient = $this->createCurlClient($this->triggerEndpoint);
         $curlClient->setOpt(CURLOPT_HTTPHEADER, array(
             'Token: '.$this->authorizationToken,
