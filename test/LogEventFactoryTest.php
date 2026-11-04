@@ -38,7 +38,8 @@ class LogEventFactoryTest extends TestCase {
             'f528764d624db129b32c21fbca0cb8d6',
             $this->expectedIpGroupHashes,
             'Firefox',
-            'https://www.loghero.io'
+            'https://www.loghero.io',
+            null
         ]);
     }
 
@@ -58,7 +59,8 @@ class LogEventFactoryTest extends TestCase {
             'f528764d624db129b32c21fbca0cb8d6',
             $this->expectedIpGroupHashes,
             'Firefox',
-            'https://www.loghero.io'
+            'https://www.loghero.io',
+            null
         ]);
     }
 
@@ -79,7 +81,8 @@ class LogEventFactoryTest extends TestCase {
             '935c68894fa1fecf4a5db560971a9427',
             $expected_ip_v6_group_hashes,
             'Firefox',
-            'https://www.loghero.io'
+            'https://www.loghero.io',
+            null
         ]);
     }
 
@@ -99,7 +102,8 @@ class LogEventFactoryTest extends TestCase {
             '4501c091b0366d76ea3218b6cfdd8097',
             null,
             'Firefox',
-            'https://www.loghero.io'
+            'https://www.loghero.io',
+            null
         ]);
     }
 
@@ -119,6 +123,7 @@ class LogEventFactoryTest extends TestCase {
             'f528764d624db129b32c21fbca0cb8d6',
             $this->expectedIpGroupHashes,
             'Firefox',
+            null,
             null
         ]);
     }
@@ -132,6 +137,19 @@ class LogEventFactoryTest extends TestCase {
         static::assertEquals($this->logEventFactory->create()->row()[$protocolColumnIdx], 'http');
     }
     
+    public function testCreateLogEventWithWebBotAuth() {
+        $webBotAuthColumnIdx = 12;
+        $this->setupServerGlobal('/page-url');
+        $_SERVER['HTTP_SIGNATURE'] = 'sig1=:abc=:';
+        $_SERVER['HTTP_SIGNATURE_INPUT'] = 'sig1=("@authority" "signature-agent");tag="web-bot-auth"';
+        $_SERVER['HTTP_SIGNATURE_AGENT'] = '"https://chatgpt.com"';
+        $row = $this->logEventFactory->create()->row();
+        static::assertEquals(
+            '{"signature":"sig1=:abc=:","signatureInput":"sig1=(\\"@authority\\" \\"signature-agent\\");tag=\\"web-bot-auth\\"","headers":{"signature-agent":"\\"https://chatgpt.com\\""}}',
+            $row[$webBotAuthColumnIdx]
+        );
+    }
+
     private function setupServerGlobal($pageUrl) {
         $_SERVER['REQUEST_URI'] = $pageUrl;
         $_SERVER['REQUEST_METHOD'] = 'POST';
@@ -141,6 +159,7 @@ class LogEventFactoryTest extends TestCase {
         $_SERVER['HTTP_REFERER'] = 'https://www.loghero.io';
         $_SERVER['HTTP_HOST'] = 'example.org';
         unset($_SERVER['HTTPS']);
+        unset($_SERVER['HTTP_SIGNATURE'], $_SERVER['HTTP_SIGNATURE_INPUT'], $_SERVER['HTTP_SIGNATURE_AGENT']);
         http_response_code(301);
     }
 }

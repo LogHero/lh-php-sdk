@@ -29,6 +29,7 @@ spl_autoload_register(
                 'loghero\\client\\buffersizeexceededexception' => '/src/buffer/BufferSizeExceededException.php',
                 'loghero\\client\\logevent' => '/src/event/LogEvent.php',
                 'loghero\\client\\logeventfactory' => '/src/event/LogEventFactory.php',
+                'loghero\\client\\webbotauth' => '/src/event/WebBotAuth.php',
                 'loghero\\client\\logtransport' => '/src/transport/LogTransport.php',
                 'loghero\\client\\logtransportinterface' => '/src/transport/LogTransportInterface.php',
                 'loghero\\client\\logtransporttype' => '/src/transport/LogTransportType.php',
