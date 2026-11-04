@@ -39,7 +39,8 @@ class LogEventFactoryTest extends TestCase {
             $this->expectedIpGroupHashes,
             'Firefox',
             'https://www.loghero.io',
-            null
+            null,
+            '127.0.0.1'
         ]);
     }
 
@@ -60,7 +61,8 @@ class LogEventFactoryTest extends TestCase {
             $this->expectedIpGroupHashes,
             'Firefox',
             'https://www.loghero.io',
-            null
+            null,
+            '127.0.0.1'
         ]);
     }
 
@@ -82,7 +84,8 @@ class LogEventFactoryTest extends TestCase {
             $expected_ip_v6_group_hashes,
             'Firefox',
             'https://www.loghero.io',
-            null
+            null,
+            '2a00:8640:1::224:36ff:feef:1d89'
         ]);
     }
 
@@ -103,7 +106,8 @@ class LogEventFactoryTest extends TestCase {
             null,
             'Firefox',
             'https://www.loghero.io',
-            null
+            null,
+            '::'
         ]);
     }
 
@@ -124,7 +128,8 @@ class LogEventFactoryTest extends TestCase {
             $this->expectedIpGroupHashes,
             'Firefox',
             null,
-            null
+            null,
+            '127.0.0.1'
         ]);
     }
 

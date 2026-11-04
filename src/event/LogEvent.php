@@ -99,7 +99,8 @@ class LogEvent {
             'ipGroups',
             'ua',
             'referer',
-            'webBotAuth'
+            'webBotAuth',
+            'clientIp'
         );
     }
 
@@ -118,7 +119,11 @@ class LogEvent {
             LogEvent::buildIpGroupHashes($this->ipAddress),
             $this->userAgent,
             $this->getExternalReferer(),
-            $this->encodeWebBotAuth()
+            $this->encodeWebBotAuth(),
+            // Plain client IP, used by the Log Hero backend only to verify bots
+            // (IP ranges, reverse DNS). Not to be confused with the legacy
+            // rawIp column of DebugLogEvent, which is pushed to analytics.
+            $this->ipAddress
         );
     }
 

@@ -10,7 +10,7 @@ class LogEventTest extends TestCase {
 
     public function testCreateColumns() {
         $logEvent = $this->createValidLogEvent();
-        $this->assertEquals(count($logEvent->columns()), 13);
+        $this->assertEquals(count($logEvent->columns()), 14);
     }
 
     public function testCreateRowFromLogEventData() {
@@ -28,7 +28,8 @@ class LogEventTest extends TestCase {
             '202cb962ac59075b964b07152d234b70.250cf8b51c773f3f8dc8b4be867a9a02.35f4a8d465e6e1edc05f3d8ab658c551.45c48cce2e2d7fbdea1afc51c7c6ad26',
             'Firefox',
             null,
-            null
+            null,
+            '123.456.78.9'
         ]);
     }
 
@@ -100,7 +101,8 @@ class LogEventTest extends TestCase {
             '202cb962ac59075b964b07152d234b70.250cf8b51c773f3f8dc8b4be867a9a02.35f4a8d465e6e1edc05f3d8ab658c551.45c48cce2e2d7fbdea1afc51c7c6ad26',
             'Firefox',
             null,
-            null
+            null,
+            '123.456.78.9'
         ]);
         $logEvent->row();
     }
