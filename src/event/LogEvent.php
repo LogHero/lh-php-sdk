@@ -13,6 +13,7 @@ class LogEvent {
     protected $hostname;
     protected $protocol;
     protected $referer;
+    protected $webBotAuth;
 
     public function setHostname($hostname) {
         $this->hostname = $hostname;
@@ -53,6 +54,18 @@ class LogEvent {
         return $this;
     }
 
+    /**
+     * @param array|null $webBotAuth Web Bot Auth headers, see WebBotAuth::fromServer().
+     */
+    public function setWebBotAuth($webBotAuth) {
+        $this->webBotAuth = $webBotAuth;
+        return $this;
+    }
+
+    public function getWebBotAuth() {
+        return $this->webBotAuth;
+    }
+
     public function setIpAddress($ipAddress) {
         $this->ipAddress = $ipAddress;
         return $this;
@@ -85,7 +98,9 @@ class LogEvent {
             'ip',
             'ipGroups',
             'ua',
-            'referer'
+            'referer',
+            'webBotAuth',
+            'clientIp'
         );
     }
 
@@ -103,7 +118,12 @@ class LogEvent {
             hash('md5', $this->ipAddress),
             LogEvent::buildIpGroupHashes($this->ipAddress),
             $this->userAgent,
-            $this->getExternalReferer()
+            $this->getExternalReferer(),
+            $this->encodeWebBotAuth(),
+            // Plain client IP, used by the Log Hero backend only to verify bots
+            // (IP ranges, reverse DNS). Not to be confused with the legacy
+            // rawIp column of DebugLogEvent, which is pushed to analytics.
+            $this->ipAddress
         );
     }
 
@@ -136,6 +156,14 @@ class LogEvent {
         if (!$property) {
             throw new InvalidLogEventException('Log event is incomplete: ' . $propertyName . ' is null');
         }
+    }
+
+    private function encodeWebBotAuth() {
+        if (!$this->webBotAuth) {
+            return null;
+        }
+        $encoded = json_encode($this->webBotAuth, JSON_UNESCAPED_SLASHES);
+        return $encoded === false ? null : $encoded;
     }
 
     private function getExternalReferer() {

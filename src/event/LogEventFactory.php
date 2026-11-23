@@ -21,7 +21,8 @@ class LogEventFactory {
             ->setTimestampAndPageLoadTime($logEvent)
             ->setMethod($logEvent)
             ->setStatusCode($logEvent)
-            ->setReferer($logEvent);
+            ->setReferer($logEvent)
+            ->setWebBotAuth($logEvent);
         return $logEvent;
     }
 
@@ -65,6 +66,11 @@ class LogEventFactory {
         if (array_key_exists('HTTP_REFERER', $_SERVER)) {
             $logEvent->setReferer($_SERVER['HTTP_REFERER']);
         }
+        return $this;
+    }
+
+    private function setWebBotAuth($logEvent) {
+        $logEvent->setWebBotAuth(WebBotAuth::fromServer($_SERVER));
         return $this;
     }
 
