@@ -3,12 +3,11 @@ namespace LogHero\Client;
 
 
 class LogEventFactory {
-    private static $ipAddressKeys = array(
-        'REMOTE_ADDR',
-        'HTTP_X_REAL_IP',
-        'HTTP_CLIENT_IP',
-        'SERVER_ADDR'
-    );
+    private $clientIpResolver;
+
+    public function __construct($clientIpResolver = null) {
+        $this->clientIpResolver = $clientIpResolver ? $clientIpResolver : new ClientIpResolver();
+    }
 
     public function create() {
         $logEvent = new LogEvent();
@@ -92,14 +91,7 @@ class LogEventFactory {
     }
 
     private function setIpAddress($logEvent) {
-        $ipAddress = null;
-        foreach (static::$ipAddressKeys as $key) {
-            $ipAddress = filter_var($_SERVER[$key], FILTER_VALIDATE_IP);
-            if ($ipAddress) {
-                break;
-            }
-        }
-        $logEvent->setIpAddress($ipAddress);
+        $logEvent->setIpAddress($this->clientIpResolver->resolve($_SERVER));
         return $this;
     }
 }
