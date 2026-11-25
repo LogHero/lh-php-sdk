@@ -3,6 +3,7 @@ namespace LogHero\Client\Test;
 
 use PHPUnit\Framework\TestCase;
 use LogHero\Client\LogEventFactory;
+use LogHero\Client\ClientIpResolver;
 
 
 class LogEventFactoryTest extends TestCase {
@@ -155,6 +156,28 @@ class LogEventFactoryTest extends TestCase {
         );
     }
 
+    public function testIpColumnsUseVisitorIpBehindGoogleCloudLoadBalancer() {
+        $this->setupServerGlobal('/page-url');
+        $_SERVER['REMOTE_ADDR'] = '35.191.10.20';
+        $_SERVER['HTTP_X_FORWARDED_FOR'] = '66.249.66.1, 34.111.29.120';
+        $row = $this->logEventFactory->create()->row();
+        static::assertEquals(md5('66.249.66.1' . 'Firefox'), $row[0]);
+        static::assertEquals(md5('66.249.66.1'), $row[8]);
+        static::assertEquals(
+            implode('.', array_map('md5', array('66', '249', '66', '1'))),
+            $row[9]
+        );
+        static::assertEquals('66.249.66.1', $row[13]);
+    }
+
+    public function testUsesInjectedClientIpResolver() {
+        $this->setupServerGlobal('/page-url');
+        $_SERVER['REMOTE_ADDR'] = '203.0.113.7';
+        $_SERVER['HTTP_TRUE_CLIENT_IP'] = '66.249.66.1';
+        $factory = new LogEventFactory(new ClientIpResolver('True-Client-IP'));
+        static::assertEquals('66.249.66.1', $factory->create()->row()[13]);
+    }
+
     private function setupServerGlobal($pageUrl) {
         $_SERVER['REQUEST_URI'] = $pageUrl;
         $_SERVER['REQUEST_METHOD'] = 'POST';
@@ -164,6 +187,7 @@ class LogEventFactoryTest extends TestCase {
         $_SERVER['HTTP_REFERER'] = 'https://www.loghero.io';
         $_SERVER['HTTP_HOST'] = 'example.org';
         unset($_SERVER['HTTPS']);
+        unset($_SERVER['HTTP_X_FORWARDED_FOR'], $_SERVER['HTTP_X_REAL_IP'], $_SERVER['HTTP_CF_CONNECTING_IP'], $_SERVER['HTTP_TRUE_CLIENT_IP']);
         unset($_SERVER['HTTP_SIGNATURE'], $_SERVER['HTTP_SIGNATURE_INPUT'], $_SERVER['HTTP_SIGNATURE_AGENT']);
         http_response_code(301);
     }
